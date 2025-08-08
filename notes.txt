@@ -1,0 +1,10 @@
+- card engine
+
+- Cards need to be stored in a deck
+    - card object
+        * suit
+        * rank
+        * colour
+    - deck
+        * contain n cards
+        * contain info on remaining classes and suits
