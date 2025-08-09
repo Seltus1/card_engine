@@ -50,8 +50,18 @@ class Deck:
                 play_deck.cards.append(x)
         shuffle(play_deck.cards)
         return play_deck
+    
 
-x = Deck.create_deck()
 
-for card in x.cards:
-    print(f"The rank is: {card.rank} and the suit is {card.suit} {f}")
+    def deal_card(self) -> Card:
+        if not self.is_empty:
+            return self.cards.pop()
+
+
+
+        
+
+# x = Deck.create_deck()
+
+# p = x.deal_card()
+# print(f"{p.rank} and {p.suit}")

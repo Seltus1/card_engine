@@ -8,3 +8,21 @@
     - deck
         * contain n cards
         * contain info on remaining classes and suits
+
+
+
+3 states. Player 1 Turn or dealer turn or gameover
+
+
+Game
+    Start
+        - dealer gets two Cards
+        - player gets 2 cards
+    Loop
+        - player can hit until 4 cards
+        - player player can choose to be done earlier 
+        - player can get blackjack or a natural (21) from deal
+    Win/lose condition
+        - player hits 21 - W 
+        - player goes over 21 - L 
+        - player goes 
