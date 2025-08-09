@@ -27,7 +27,7 @@ class Rank(Enum):
 
 
 
-@dataclass
+@dataclass(frozen=True)
 class Card:
     suit: str
     rank: int
@@ -54,9 +54,9 @@ class Deck:
     def remaining_cards(self):
         return len(self.cards)
     
-    
-    def deal_card(self) -> Card:
-        if not self.is_empty:
+
+    def deal_card(self, can_add: bool) -> Card:
+        if not self.is_empty and can_add:
             return self.cards.pop()
 
 
@@ -70,6 +70,9 @@ class Hand:
     def hand_size(self) -> int:
         return len(self.cards)
     
+    @property
+    def can_add_hand(self) -> bool:
+        return self.hand_limit == self.hand_size
     #Always remember to change any function sigs when you change the way things aer organized or sorted
     def create_hand(hand_limit: int) -> 'Hand':
         return Hand(hand_limit=hand_limit)
@@ -80,6 +83,17 @@ class Hand:
             return True
         else:
             return False
+        
+    
+    def has_rank(self, rank: str) -> tuple[bool, int]:
+        rank = rank.upper()
+        found = False
+        total = 0
+        for card in self.cards:
+            if card.rank == rank:
+                total += 1
+                found = True
+        return found, total
 
 # x = Deck.create_deck()
 
