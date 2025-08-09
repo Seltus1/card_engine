@@ -38,28 +38,48 @@ class Card:
 class Deck:
     is_empty: bool
     total_cards: int
-    remaining_cards: int
     cards: list[Card] = field(default_factory=list)
 
     @classmethod
     def create_deck(cls) -> 'Deck':
-        play_deck = Deck(False, 52, 52)
+        play_deck = Deck(False, 52)
         for i in range(1,5):
             for j in range (1,14):
-                x = Card(Suit(i).name, Rank(j).name)
-                play_deck.cards.append(x)
+                play_deck.cards.append(Card(Suit(i).name, Rank(j).name))
         shuffle(play_deck.cards)
         return play_deck
     
 
-
+    @property
+    def remaining_cards(self):
+        return len(self.cards)
+    
+    
     def deal_card(self) -> Card:
         if not self.is_empty:
             return self.cards.pop()
 
 
+@dataclass
+class Hand:
+    hand_limit: int
+    cards: list[Card] = field(default_factory=list)
 
-        
+
+    @property
+    def hand_size(self) -> int:
+        return len(self.cards)
+    
+    #Always remember to change any function sigs when you change the way things aer organized or sorted
+    def create_hand(hand_limit: int) -> 'Hand':
+        return Hand(hand_limit=hand_limit)
+    
+    def add_card(self, card: Card) -> bool:
+        if self.hand_size < self.hand_limit:
+            self.cards.append(card)
+            return True
+        else:
+            return False
 
 # x = Deck.create_deck()
 

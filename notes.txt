@@ -26,3 +26,6 @@ Game
         - player hits 21 - W 
         - player goes over 21 - L 
         - player goes 
+
+
+organize classes and finish implementing them
