@@ -32,6 +32,9 @@ class Card:
     suit: str
     rank: int
 
+    def __str__(self):
+        return f"{self.rank} of {self.suit}"
+
 
 
 @dataclass
@@ -88,6 +91,9 @@ class Hand:
     
     def contains_rank(self, target: str):
         return any(card.rank == target for card in self.cards)
+    
+    def __str__(self):
+        return (f"Hand contains: {card}" for card in self.cards)
 
 # x = Deck.create_deck()
 

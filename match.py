@@ -28,13 +28,14 @@ class States(Enum):
     PLAYER = 2
     ROUNDOVER = 3
     NATURAL_CHECK = 4
-    WIN = 5
+    BLACKJACK = 5
+    WIN = 6
 
 
 
 class Entity:
     def __init__(self, hand_limit: int):
-        self.hand = Hand.create_hand(hand_limit)
+        self.hand: Hand = Hand.create_hand(hand_limit)
     
     def hand_score(self) -> int:
         total = 0
@@ -97,16 +98,17 @@ class BlackJack:
                     game_over = True
 
                 case "PLAYER":
-                    print("LETS GO GAMBLING")
+                    curr_state = BlackJack.player_state(deck, curr_state, player, dealer)
 
 
     def deal_state(deck: Deck, curr_state: States, player: Player, dealer: Dealer):
         player_card1 = deck.deal_card(True)
         player_card2 = deck.deal_card(True)
-        natural_suites = ("ACE", "QUEEN", "JACK", "KING", "TEN")
-        if player_card1.rank in natural_suites and player_card2.rank in natural_suites:
-            curr_state = States(4).name
-            return curr_state
+        natural_ranks = ("ACE", "QUEEN", "JACK", "KING", "TEN")
+        if player_card1.rank == "ACE" or player_card2.rank == "ACE":
+            if player_card1.rank in natural_ranks and player_card2.rank in natural_ranks:
+                curr_state = States(4).name
+                return curr_state
 
         player.hand.add_card(player_card1)
         player.hand.add_card(player_card2)
@@ -115,18 +117,36 @@ class BlackJack:
 
         curr_state = States(2).name
         return curr_state
+
     
+    #player can hit, stand, double down(later), 
+    def player_state(deck: Deck, curr_state: str, player: Player):
+        print("Enter the following:")
+        print("H to hit, D for double down, S for stand")
+        end_turn = False
+
+        while not end_turn:
+            user_input = input()
+            match user_input.upper():
+                case "H":
+                    if player.hand.can_add_hand:
+                        player.hand.add_card(deck.deal_card(True))
+                        print(player.hand)
+                        if player.hand_score == 21:
+                            return States(5).name
+                        end_turn = player.hand_score() >= 21
+                        
     
 
-player = Player(4)
-player.hand.add_card(ace_of_spaces)
-player.hand.add_card(king_of_heart)
-print(hand_score(player))
-print(player.hand_score())
+
+# player = Player(4)
+# player.hand.add_card(ace_of_spaces)
+# player.hand.add_card(king_of_heart)
+# print(player.hand_score())
 # card = Card(2, 2)
 # player.hand.add_card(card)
 # print(player.hand.hand_size)
 # print(player)
 
 
-# BlackJack.run_game()
+BlackJack.run_game()
