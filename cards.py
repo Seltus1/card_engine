@@ -58,6 +58,7 @@ class Deck:
     def deal_card(self, can_add: bool) -> Card:
         if not self.is_empty and can_add:
             return self.cards.pop()
+        
 
 
 @dataclass
@@ -85,15 +86,8 @@ class Hand:
             return False
         
     
-    def has_rank(self, rank: str) -> tuple[bool, int]:
-        rank = rank.upper()
-        found = False
-        total = 0
-        for card in self.cards:
-            if card.rank == rank:
-                total += 1
-                found = True
-        return found, total
+    def contains_rank(self, target: str):
+        return any(card.rank == target for card in self.cards)
 
 # x = Deck.create_deck()
 
