@@ -26,10 +26,15 @@ class Value(Enum):
 class States(Enum):
     DEAL = 1
     PLAYER = 2
+    #player stands
     ROUNDOVER = 3
+    #Ace + 10 on the deal
     NATURAL_CHECK = 4
+    #hitting black jack with hitting
     BLACKJACK = 5
     WIN = 6
+    LOSE = 7
+    BUST = 8
 
 
 
@@ -98,18 +103,28 @@ class BlackJack:
                     game_over = True
 
                 case "PLAYER":
-                    curr_state = BlackJack.player_state(deck, curr_state, player, dealer)
+                    curr_state = BlackJack.player_state(deck, curr_state, player)
+                
+                case "LOSE":
+                    print("A winner never quits...")
+                    game_over = True
+
+                case "BUST":
+                    print("Womp womp, there goes the kid's college fund..")
+                    game_over = True
+
 
 
     def deal_state(deck: Deck, curr_state: States, player: Player, dealer: Dealer):
         player_card1 = deck.deal_card(True)
         player_card2 = deck.deal_card(True)
         natural_ranks = ("ACE", "QUEEN", "JACK", "KING", "TEN")
+        #ncheck for natural hit
         if player_card1.rank == "ACE" or player_card2.rank == "ACE":
             if player_card1.rank in natural_ranks and player_card2.rank in natural_ranks:
                 curr_state = States(4).name
                 return curr_state
-
+        
         player.hand.add_card(player_card1)
         player.hand.add_card(player_card2)
         dealer.hand.add_card(deck.deal_card(True))
@@ -126,16 +141,27 @@ class BlackJack:
         end_turn = False
 
         while not end_turn:
+            
             user_input = input()
             match user_input.upper():
                 case "H":
-                    if player.hand.can_add_hand:
-                        player.hand.add_card(deck.deal_card(True))
-                        print(player.hand)
-                        if player.hand_score == 21:
-                            return States(5).name
-                        end_turn = player.hand_score() >= 21
-                        
+                    print("yep")
+                    player.hand.add_card(deck.deal_card(True))
+                    print(player.hand)
+                    if player.hand_score == 21:
+                        return States(5).name
+                    if player.hand_score() > 21:
+                        return States(8).name
+                    
+                case "S":
+                    print("Done hitting it from the bacc")
+                    return States(3).name
+                
+                case "D":
+                    print("Not yet implemented")
+                    
+
+
     
 
 

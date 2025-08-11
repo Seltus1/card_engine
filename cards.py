@@ -76,10 +76,14 @@ class Hand:
     
     @property
     def can_add_hand(self) -> bool:
-        return self.hand_limit == self.hand_size
+
+        return self.hand_size < self.hand_limit
     #Always remember to change any function sigs when you change the way things aer organized or sorted
-    def create_hand(hand_limit: int) -> 'Hand':
-        return Hand(hand_limit=hand_limit)
+    def create_hand(hand_limit) -> 'Hand':
+        if hand_limit:
+            return Hand(hand_limit=hand_limit)
+        else:
+            return Hand(hand_limit=100)
     
     def add_card(self, card: Card) -> bool:
         if self.hand_size < self.hand_limit:
@@ -93,7 +97,7 @@ class Hand:
         return any(card.rank == target for card in self.cards)
     
     def __str__(self):
-        return (f"Hand contains: {card}" for card in self.cards)
+        return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)
 
 # x = Deck.create_deck()
 
