@@ -163,9 +163,28 @@ class BlackJack:
                     print(f"Dealer: {dealer.hand}")
                     dealer.hard17(deck)
                     player_final_score = player.get_max_valid_score()
-                    print(f"Dealer: {dealer.hand}")
+                    dealer_final_score = dealer.get_max_valid_score()
+                    if player_final_score > dealer_final_score:
+                        curr_state = States(6).name
+                    elif player_final_score < dealer_final_score:
+                        curr_state = States(7).name
+                    else:
+                        curr_state = States(9).name
+                    print(f"Dealer: {dealer.hand} and final score {dealer_final_score}")
                     print(f"Final score: {player_final_score} Player {player.hand}")
+                    
+                
+                case "WIN":
+                    print("TIME TO GET SOME BEER")
                     game_over = True
+
+                case "LOSE":
+                    print("TRY AGAIN, NERD!")
+                    game_over = True
+                
+                case "Tie":
+                    print("It's always been rigged..")
+
 
 
     def deal_state(deck: Deck, player: Player, dealer: Dealer):
