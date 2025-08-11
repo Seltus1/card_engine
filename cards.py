@@ -79,7 +79,7 @@ class Hand:
 
         return self.hand_size < self.hand_limit
     #Always remember to change any function sigs when you change the way things aer organized or sorted
-    def create_hand(hand_limit) -> 'Hand':
+    def create_hand(hand_limit: int = None) -> 'Hand':
         if hand_limit:
             return Hand(hand_limit=hand_limit)
         else:

@@ -28,19 +28,23 @@ class States(Enum):
     PLAYER = 2
     #player stands
     ROUNDOVER = 3
-    #Ace + 10 on the deal
-    NATURAL_CHECK = 4
-    #hitting black jack with hitting
+    #Ace + 10 value on the deal
+    BLACKJACK = 4
+    # 9 + 10
     TWENTYONE = 5
     WIN = 6
     LOSE = 7
     BUST = 8
+    TIE = 9
 
 
 
 class Entity:
-    def __init__(self, hand_limit: int):
-        self.hand: Hand = Hand.create_hand(hand_limit)
+    def __init__(self, hand_limit: int = None):
+        if hand_limit:
+            self.hand: Hand = Hand.create_hand(hand_limit)
+        else:
+            self.hand: Hand = Hand.create_hand(hand_limit)
         self.soft_score = 0
         self.hard_score = 0
     
@@ -85,7 +89,7 @@ class Entity:
 
 
 class Player(Entity): 
-    def __init__(self, hand_limit: int):
+    def __init__(self, hand_limit: int = None):
         super().__init__(hand_limit)
     def __str__(self):
         return (f"The player has {self.hand.hand_size}")
@@ -93,13 +97,24 @@ class Player(Entity):
     
 
 class Dealer(Entity): 
-    def __init__(self, hand_limit: int):
+    def __init__(self, hand_limit: int = None):
         super().__init__(hand_limit)
+        self.up_card = None
     def __str__(self):
         return (f"The Dealer has {self.hand.hand_size}")
-    
-    def blackjack_h17(self):
-        x=5
+    #must hit if score below 16, dealer hits on soft 17, stop at hard 17
+    def hard17(self, deck: Deck):
+        self.update_score(self.hand_score())
+
+        while self.hard_score < 17 or (self.soft_score < 17 and self.soft_score != 0):
+            self.hand.add_card(deck.deal_card(True))
+            self.update_score(self.hand_score())
+            # if self.hard_score > 21 and self.soft_score > 21:
+            #     return False
+            # if self.hard_score < 17 or self.soft_score < 17:
+            #     self.hand.add_card(deck.deal_card(True))
+            #     continue
+
 
 class BlackJack:
 
@@ -111,19 +126,19 @@ class BlackJack:
         deck = Deck.create_deck()
         
         game_over = False
-        player = Player(4)
-        dealer = Dealer(4)
+        player = Player()
+        dealer = Dealer()
         # BlackJack.deal_state(deck, curr_state, player, dealer)
         while not game_over:
             match curr_state:
                 case "DEAL":
-                    curr_state = BlackJack.deal_state(deck, curr_state, player, dealer)
-                case "NATURAL_CHECK":
+                    curr_state = BlackJack.deal_state(deck, player, dealer)
+                case "BLACKJACK":
                     print("glizzymaxx")
                     game_over = True
 
                 case "PLAYER":
-                    curr_state = BlackJack.player_state(deck, curr_state, player)
+                    curr_state = BlackJack.player_state(deck, player)
                 
                 case "LOSE":
                     print("A winner never quits...")
@@ -131,15 +146,22 @@ class BlackJack:
 
                 case "BUST":
                     print("Womp womp, there goes the kid's college fund..")
+                    print(player.hand)
                     game_over = True
 
                 case "TWENTYONE":
                     print("ONE MORE ROUND CANT HURT")
                     game_over = True
 
+                case "ROUNDOVER":
+                    print(f"Dealer: {dealer.hand}")
+                    dealer.hard17(deck)
+                    print(f"Dealer: {dealer.hand}")
+                    print(f"Player {player.hand}")
+                    game_over = True
 
 
-    def deal_state(deck: Deck, curr_state: States, player: Player, dealer: Dealer):
+    def deal_state(deck: Deck, player: Player, dealer: Dealer):
         player_card1 = deck.deal_card(True)
         player_card2 = deck.deal_card(True)
         natural_ranks = ("QUEEN", "JACK", "KING", "TEN")
@@ -155,13 +177,11 @@ class BlackJack:
         player.hand.add_card(player_card2)
         dealer.hand.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
-
-        curr_state = States(2).name
-        return curr_state
+        return States(2).name
 
     
     #player can hit, stand, double down(later), 
-    def player_state(deck: Deck, curr_state: str, player: Player):
+    def player_state(deck: Deck, player: Player):
         print("Enter the following:")
         print("H to hit, D for double down, S for stand")
         end_turn = False
@@ -173,9 +193,10 @@ class BlackJack:
                 case "H":
                     player.hand.add_card(deck.deal_card(True))
                     player.update_score(player.hand_score())
+
                     if player.hard_score == 21 or player.soft_score == 21:
                         print(player.hand)
-                        return States(5).name
+                        return States(3).name
                     if player.hard_score > 21 and player.soft_score > 21:
                         return States(8).name
                     elif player.hard_score > 21 and player.soft_score == 0:
