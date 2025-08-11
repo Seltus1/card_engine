@@ -31,7 +31,7 @@ class States(Enum):
     #Ace + 10 on the deal
     NATURAL_CHECK = 4
     #hitting black jack with hitting
-    BLACKJACK = 5
+    TWENTYONE = 5
     WIN = 6
     LOSE = 7
     BUST = 8
@@ -41,6 +41,8 @@ class States(Enum):
 class Entity:
     def __init__(self, hand_limit: int):
         self.hand: Hand = Hand.create_hand(hand_limit)
+        self.soft_score = 0
+        self.hard_score = 0
     
     def hand_score(self) -> int:
         total = 0
@@ -58,11 +60,27 @@ class Entity:
                     continue
                 low_total += Value[card.rank].value
                 total += Value[card.rank].value
+            self.update_score((low_total,total))
             return (low_total,total)
         
         else:
             total += sum(Value[card.rank].value for card in self.hand.cards)
+            self.update_score(total)
             return total
+    
+    def update_score(self, score):
+        
+        if isinstance(score, tuple):
+            self.soft_score = score[0]
+            self.hard_score = score[1]
+        else:
+            self.hard_score = score
+
+    def get_soft_score(self) -> int:
+        return self.soft_score
+    
+    def get_hard_score(self) -> int:
+        return self.hard_score
 
 
 
@@ -80,6 +98,8 @@ class Dealer(Entity):
     def __str__(self):
         return (f"The Dealer has {self.hand.hand_size}")
     
+    def blackjack_h17(self):
+        x=5
 
 class BlackJack:
 
@@ -113,17 +133,23 @@ class BlackJack:
                     print("Womp womp, there goes the kid's college fund..")
                     game_over = True
 
+                case "TWENTYONE":
+                    print("ONE MORE ROUND CANT HURT")
+                    game_over = True
+
 
 
     def deal_state(deck: Deck, curr_state: States, player: Player, dealer: Dealer):
         player_card1 = deck.deal_card(True)
         player_card2 = deck.deal_card(True)
-        natural_ranks = ("ACE", "QUEEN", "JACK", "KING", "TEN")
+        natural_ranks = ("QUEEN", "JACK", "KING", "TEN")
         #ncheck for natural hit
         if player_card1.rank == "ACE" or player_card2.rank == "ACE":
             if player_card1.rank in natural_ranks and player_card2.rank in natural_ranks:
-                curr_state = States(4).name
-                return curr_state
+                player.hand.add_card(player_card1)
+                player.hand.add_card(player_card2)
+                print(player.hand)
+                return States(4).name
         
         player.hand.add_card(player_card1)
         player.hand.add_card(player_card2)
@@ -141,16 +167,18 @@ class BlackJack:
         end_turn = False
 
         while not end_turn:
-            
+            print(player.hand)
             user_input = input()
             match user_input.upper():
                 case "H":
-                    print("yep")
                     player.hand.add_card(deck.deal_card(True))
-                    print(player.hand)
-                    if player.hand_score == 21:
+                    player.update_score(player.hand_score())
+                    if player.hard_score == 21 or player.soft_score == 21:
+                        print(player.hand)
                         return States(5).name
-                    if player.hand_score() > 21:
+                    if player.hard_score > 21 and player.soft_score > 21:
+                        return States(8).name
+                    elif player.hard_score > 21 and player.soft_score == 0:
                         return States(8).name
                     
                 case "S":
@@ -159,7 +187,11 @@ class BlackJack:
                 
                 case "D":
                     print("Not yet implemented")
-                    
+
+
+    #player hits a blackjack, now we calculate it
+    def blackjack_state(self, deck: Deck, player: Player, dealer: Dealer) -> str:
+        x=5
 
 
     
