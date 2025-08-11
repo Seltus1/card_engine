@@ -80,6 +80,15 @@ class Entity:
         else:
             self.hard_score = score
 
+    def get_max_valid_score(self):
+        x=5
+        if self.hard_score == 21 or self.soft_score == 21:
+            return 21
+        elif self.hard_score > 21:
+            return self.soft_score
+        else:
+            return max(self.hard_score, self.soft_score)
+
     def get_soft_score(self) -> int:
         return self.soft_score
     
@@ -105,15 +114,12 @@ class Dealer(Entity):
     #must hit if score below 16, dealer hits on soft 17, stop at hard 17
     def hard17(self, deck: Deck):
         self.update_score(self.hand_score())
-
+        if self.get_hard_score() == 21:
+            return
         while self.hard_score < 17 or (self.soft_score < 17 and self.soft_score != 0):
             self.hand.add_card(deck.deal_card(True))
             self.update_score(self.hand_score())
-            # if self.hard_score > 21 and self.soft_score > 21:
-            #     return False
-            # if self.hard_score < 17 or self.soft_score < 17:
-            #     self.hand.add_card(deck.deal_card(True))
-            #     continue
+
 
 
 class BlackJack:
@@ -156,8 +162,9 @@ class BlackJack:
                 case "ROUNDOVER":
                     print(f"Dealer: {dealer.hand}")
                     dealer.hard17(deck)
+                    player_final_score = player.get_max_valid_score()
                     print(f"Dealer: {dealer.hand}")
-                    print(f"Player {player.hand}")
+                    print(f"Final score: {player_final_score} Player {player.hand}")
                     game_over = True
 
 
