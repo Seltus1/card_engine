@@ -31,7 +31,7 @@ class States(Enum):
     #Ace + 10 value on the deal
     BLACKJACK = 4
     # 9 + 10
-    TWENTYONE = 5
+    DEALER_PEAK = 5
     WIN = 6
     LOSE = 7
     BUST = 8
@@ -81,7 +81,6 @@ class Entity:
             self.hard_score = score
 
     def get_max_valid_score(self):
-        x=5
         if self.hard_score == 21 or self.soft_score == 21:
             return 21
         elif self.hard_score > 21:
@@ -120,11 +119,13 @@ class Dealer(Entity):
         while self.hard_score < 17 or (self.soft_score < 17 and self.soft_score != 0):
             self.hand.add_card(deck.deal_card(True))
             self.update_score(self.hand_score())
+    def get_up_card(self):
+        if len(self.hand.cards != 0):
+            return self.hand.cards[0]
 
 
 
 class BlackJack:
-
 
     def __init__(self):
         pass
@@ -153,7 +154,7 @@ class BlackJack:
                     print(player.hand)
                     game_over = True
 
-                case "TWENTYONE":
+                case "DEALER_PEAK":
                     print("ONE MORE ROUND CANT HURT")
                     game_over = True
 
@@ -174,21 +175,28 @@ class BlackJack:
 
 
     def deal_state(deck: Deck, player: Player, dealer: Dealer):
-        player_card1 = deck.deal_card(True)
-        player_card2 = deck.deal_card(True)
+        player.hand.add_card(deck.deal_card(True))
+        dealer.hand.add_card(deck.deal_card(True))
+        player.hand.add_card(deck.deal_card(True))
+        dealer.hand.add_card(deck.deal_card(True))
+
+        player.update_score(player.hand_score())
+        if player.soft_score == 21 or player.hard_score == 21:
+            print(player.hand)
+            return States(4).name
         natural_ranks = ("QUEEN", "JACK", "KING", "TEN")
-        #ncheck for natural hit
-        if player_card1.rank == "ACE" or player_card2.rank == "ACE":
-            if player_card1.rank in natural_ranks and player_card2.rank in natural_ranks:
-                player.hand.add_card(player_card1)
-                player.hand.add_card(player_card2)
-                print(player.hand)
-                return States(4).name
         
-        player.hand.add_card(player_card1)
-        player.hand.add_card(player_card2)
-        dealer.hand.add_card(deck.deal_card(True))
-        dealer.hand.add_card(deck.deal_card(True))
+        dealer.update_score(dealer.hand_score())
+        #ncheck for natural hit
+        # if player_card1.rank == "ACE" or player_card2.rank == "ACE":
+        #     if player_card1.rank in natural_ranks and player_card2.rank in natural_ranks:
+        #         player.hand.add_card(player_card1)
+        #         player.hand.add_card(player_card2)
+        #         print(player.hand)
+        #         return States(4).name
+        
+        # player.hand.add_card(player_card1)
+        # player.hand.add_card(player_card2)
         return States(2).name
 
     
@@ -220,6 +228,9 @@ class BlackJack:
                 
                 case "D":
                     print("Not yet implemented")
+
+
+                    
     def roundover_state(player: Player, dealer: Dealer, deck: Deck):
         print(f"Dealer: {dealer.hand}")
         dealer.hard17(deck)

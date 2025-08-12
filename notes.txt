@@ -38,4 +38,3 @@ Figure out how to do the split value calculations for soft and hard totals
 FIVE of HEART , ACE of CLUB , JACK of SPADE - buggy card combo
 
 
-if the hard score is more than 22
