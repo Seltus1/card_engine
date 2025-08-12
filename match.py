@@ -109,6 +109,7 @@ class Dealer(Entity):
     def __init__(self, hand_limit: int = None):
         super().__init__(hand_limit)
         self.up_card = None
+        self.hole_card = None
     def __str__(self):
         return (f"The Dealer has {self.hand.hand_size}")
     #must hit if score below 16, dealer hits on soft 17, stop at hard 17
@@ -136,6 +137,7 @@ class BlackJack:
         dealer = Dealer()
         # BlackJack.deal_state(deck, curr_state, player, dealer)
         while not game_over:
+
             match curr_state:
                 case "DEAL":
                     curr_state = BlackJack.deal_state(deck, player, dealer)
@@ -146,10 +148,6 @@ class BlackJack:
                 case "PLAYER":
                     curr_state = BlackJack.player_state(deck, player)
                 
-                case "LOSE":
-                    print("A winner never quits...")
-                    game_over = True
-
                 case "BUST":
                     print("Womp womp, there goes the kid's college fund..")
                     print(player.hand)
@@ -160,20 +158,8 @@ class BlackJack:
                     game_over = True
 
                 case "ROUNDOVER":
-                    print(f"Dealer: {dealer.hand}")
-                    dealer.hard17(deck)
-                    player_final_score = player.get_max_valid_score()
-                    dealer_final_score = dealer.get_max_valid_score()
-                    if player_final_score > dealer_final_score:
-                        curr_state = States(6).name
-                    elif player_final_score < dealer_final_score:
-                        curr_state = States(7).name
-                    else:
-                        curr_state = States(9).name
-                    print(f"Dealer: {dealer.hand} and final score {dealer_final_score}")
-                    print(f"Final score: {player_final_score} Player {player.hand}")
+                    curr_state = BlackJack.roundover_state(player, dealer, deck)
                     
-                
                 case "WIN":
                     print("TIME TO GET SOME BEER")
                     game_over = True
@@ -229,11 +215,25 @@ class BlackJack:
                         return States(8).name
                     
                 case "S":
-                    print("Done hitting it from the bacc")
+                    player.update_score(player.hand_score())
                     return States(3).name
                 
                 case "D":
                     print("Not yet implemented")
+    def roundover_state(player: Player, dealer: Dealer, deck: Deck):
+        print(f"Dealer: {dealer.hand}")
+        dealer.hard17(deck)
+        player_final_score = player.get_max_valid_score()
+        dealer_final_score = dealer.get_max_valid_score()
+        if player_final_score > dealer_final_score:
+            curr_state = States(6).name
+        elif player_final_score < dealer_final_score:
+            curr_state = States(7).name
+        else:
+            curr_state = States(9).name
+        print(f"Dealer: {dealer.hand} and final score {dealer_final_score}")
+        print(f"Final score: {player_final_score} Player {player.hand}")
+        return curr_state
 
 
     #player hits a blackjack, now we calculate it

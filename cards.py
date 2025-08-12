@@ -25,6 +25,11 @@ class Rank(Enum):
     QUEEN = 12
     KING = 13
 
+class Symbols(Enum):
+    SPADE = '♣'
+    CLUB = '♠'
+    HEART = '♥'
+    DIAMOND = '♦'
 
 
 @dataclass(frozen=True)
@@ -34,7 +39,8 @@ class Card:
 
     def __str__(self):
         return f"{self.rank} of {self.suit}"
-    def print_card(rank, suit):
+    
+    def print_card(self, rank, suit):
         """
         Prints an ASCII representation of a single playing card.
 
@@ -47,13 +53,13 @@ class Card:
         side = "│         │"
 
         if rank == "10":  # Ten is the only rank with two digits
-            rank_right = rank
-            rank_left = rank
+            rank_right = self.rank
+            rank_left = self.rank
         else:
-            rank_right = rank + " "
-            rank_left = " " + rank
+            rank_right = self.rank + " "
+            rank_left = " " + self.rank
 
-        suit_line = f"│    {suit}    │"
+        suit_line = f"│    {self.suit}    │"
         rank_line_left = f"│{rank_left}       │"
         rank_line_right = f"│       {rank_right}│"
 
