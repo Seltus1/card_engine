@@ -120,7 +120,7 @@ class Dealer(Entity):
             self.hand.add_card(deck.deal_card(True))
             self.update_score(self.hand_score())
     def get_up_card(self):
-        if len(self.hand.cards != 0):
+        if len(self.hand.cards) != 0:
             return self.hand.cards[0]
 
 
@@ -171,6 +171,7 @@ class BlackJack:
                 
                 case "Tie":
                     print("It's always been rigged..")
+                    game_over = True
 
 
 
@@ -179,7 +180,7 @@ class BlackJack:
         dealer.hand.add_card(deck.deal_card(True))
         player.hand.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
-
+        print(dealer.get_up_card())
         player.update_score(player.hand_score())
         if player.soft_score == 21 or player.hard_score == 21:
             print(player.hand)
