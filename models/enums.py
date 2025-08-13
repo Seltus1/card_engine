@@ -41,3 +41,17 @@ class Value(Enum):
     JACK = 10
     QUEEN = 10
     KING = 10
+
+class States(Enum):
+    DEAL = 1
+    PLAYER = 2
+    #player stands
+    ROUNDOVER = 3
+    #Ace + 10 value on the deal
+    BLACKJACK = 4
+    # 9 + 10
+    DEALER_PEAK = 5
+    WIN = 6
+    LOSE = 7
+    BUST = 8
+    TIE = 9

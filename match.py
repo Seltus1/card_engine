@@ -1,44 +1,10 @@
-from enum import Enum
+from models.enums import States
 from models.cards import *
 from entities.dealer import Dealer
 from entities.player import Player
 
 ace_of_spaces = Card("SPADE", "ACE") 
 king_of_heart = Card("HEART", "KING")
-
-
-class Value(Enum):
-    ACE = (1,11)
-    TWO = 2
-    THREE = 3
-    FOUR = 4
-    FIVE = 5
-    SIX = 6
-    SEVEN = 7
-    EIGHT = 8
-    NINE = 9
-    TEN = 10
-    JACK = 10
-    QUEEN = 10
-    KING = 10
-
-
-
-class States(Enum):
-    DEAL = 1
-    PLAYER = 2
-    #player stands
-    ROUNDOVER = 3
-    #Ace + 10 value on the deal
-    BLACKJACK = 4
-    # 9 + 10
-    DEALER_PEAK = 5
-    WIN = 6
-    LOSE = 7
-    BUST = 8
-    TIE = 9
-
-
 
 class BlackJack:
 
@@ -179,21 +145,5 @@ class BlackJack:
             
         return States(2).name
             
-
-        
-
-
-    
-
-
-# player = Player(4)
-# player.hand.add_card(ace_of_spaces)
-# player.hand.add_card(king_of_heart)
-# print(player.hand_score())
-# card = Card(2, 2)
-# player.hand.add_card(card)
-# print(player.hand.hand_size)
-# print(player)
-
 
 BlackJack.run_game()
