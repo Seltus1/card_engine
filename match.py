@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from enum import Enum
-from cards import *
+# from cards import *
+from models.card import Card
+from models.deck import Deck
+from models.hand import Hand
 
 ace_of_spaces = Card("SPADE", "ACE") 
 king_of_heart = Card("HEART", "KING")
