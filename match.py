@@ -84,7 +84,10 @@ class Entity:
         if self.hard_score == 21 or self.soft_score == 21:
             return 21
         elif self.hard_score > 21:
-            return self.soft_score
+            if self.soft_score != 0:
+                return self.soft_score
+            else:
+                return 21 - self.hard_score
         else:
             return max(self.hard_score, self.soft_score)
 
@@ -99,6 +102,7 @@ class Entity:
 class Player(Entity): 
     def __init__(self, hand_limit: int = None):
         super().__init__(hand_limit)
+        self.has_natural_blackjack = False
     def __str__(self):
         return (f"The player has {self.hand.hand_size}")
     
@@ -122,6 +126,8 @@ class Dealer(Entity):
     def get_up_card(self):
         if len(self.hand.cards) != 0:
             return self.hand.cards[0]
+        else:
+            print("Dealer has no cards")
 
 
 
@@ -155,21 +161,20 @@ class BlackJack:
                     game_over = True
 
                 case "DEALER_PEAK":
-                    print("ONE MORE ROUND CANT HURT")
-                    game_over = True
+                    curr_state = BlackJack.dealer_peak(deck, player, dealer)
 
                 case "ROUNDOVER":
-                    curr_state = BlackJack.roundover_state(player, dealer, deck)
+                    curr_state = BlackJack.roundover_state(deck, player, dealer)
                     
                 case "WIN":
-                    print("TIME TO GET SOME BEER")
+                    print("ONE MORE ROUND CANT HURT")
                     game_over = True
 
                 case "LOSE":
                     print("TRY AGAIN, NERD!")
                     game_over = True
                 
-                case "Tie":
+                case "TIE":
                     print("It's always been rigged..")
                     game_over = True
 
@@ -184,20 +189,15 @@ class BlackJack:
         player.update_score(player.hand_score())
         if player.soft_score == 21 or player.hard_score == 21:
             print(player.hand)
-            return States(4).name
-        natural_ranks = ("QUEEN", "JACK", "KING", "TEN")
+            #change this to dealer peak
+            player.has_natural_blackjack = True
+            return States(5).name
         
+        natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
+        up_card = dealer.get_up_card()
+        if up_card.rank in natural_ranks:
+            return States(5).name
         dealer.update_score(dealer.hand_score())
-        #ncheck for natural hit
-        # if player_card1.rank == "ACE" or player_card2.rank == "ACE":
-        #     if player_card1.rank in natural_ranks and player_card2.rank in natural_ranks:
-        #         player.hand.add_card(player_card1)
-        #         player.hand.add_card(player_card2)
-        #         print(player.hand)
-        #         return States(4).name
-        
-        # player.hand.add_card(player_card1)
-        # player.hand.add_card(player_card2)
         return States(2).name
 
     
@@ -232,11 +232,13 @@ class BlackJack:
 
 
                     
-    def roundover_state(player: Player, dealer: Dealer, deck: Deck):
+    def roundover_state(deck: Deck, player: Player, dealer: Dealer):
         print(f"Dealer: {dealer.hand}")
         dealer.hard17(deck)
         player_final_score = player.get_max_valid_score()
         dealer_final_score = dealer.get_max_valid_score()
+        print(f"The scores are for player {player_final_score} and dealer {dealer_final_score}")
+        print()
         if player_final_score > dealer_final_score:
             curr_state = States(6).name
         elif player_final_score < dealer_final_score:
@@ -248,9 +250,24 @@ class BlackJack:
         return curr_state
 
 
-    #player hits a blackjack, now we calculate it
-    def blackjack_state(self, deck: Deck, player: Player, dealer: Dealer) -> str:
-        x=5
+    #dealer_peak = state 5
+    def dealer_peak(deck: Deck, player: Player, dealer: Dealer) -> str:
+        print("here")
+        dealer.update_score(dealer.hand_score())
+        dealer_score = dealer.get_max_valid_score()
+        if dealer_score == 21:
+            if player.has_natural_blackjack:
+                #tie
+                print(f"Unlucky...{dealer.hand}")
+                return States(9).name
+            else:
+                print(f"shit on {dealer.hand}")
+                return States(6).name
+            
+        return States(2).name
+            
+
+        
 
 
     
