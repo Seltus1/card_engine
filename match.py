@@ -149,7 +149,7 @@ class BlackJack:
                 case "DEAL":
                     curr_state = BlackJack.deal_state(deck, player, dealer)
                 case "BLACKJACK":
-                    print("glizzymaxx")
+                    print("glizzymaxx!!!")
                     game_over = True
 
                 case "PLAYER":
@@ -185,6 +185,8 @@ class BlackJack:
         dealer.hand.add_card(deck.deal_card(True))
         player.hand.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
+        natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
+        up_card = dealer.get_up_card()
         print(dealer.get_up_card())
         player.update_score(player.hand_score())
         if player.soft_score == 21 or player.hard_score == 21:
@@ -193,8 +195,7 @@ class BlackJack:
             player.has_natural_blackjack = True
             return States(5).name
         
-        natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
-        up_card = dealer.get_up_card()
+        
         if up_card.rank in natural_ranks:
             return States(5).name
         dealer.update_score(dealer.hand_score())
@@ -262,7 +263,11 @@ class BlackJack:
                 return States(9).name
             else:
                 print(f"shit on {dealer.hand}")
+                print()
+                print(f"Player hand: {player.hand}")
                 return States(6).name
+        elif player.has_natural_blackjack:
+            return States(4).name
             
         return States(2).name
             
