@@ -1,9 +1,7 @@
-from dataclasses import dataclass
 from enum import Enum
-# from cards import *
-from models.card import Card
-from models.deck import Deck
-from models.hand import Hand
+from models.cards import *
+from entities.dealer import Dealer
+from entities.player import Player
 
 ace_of_spaces = Card("SPADE", "ACE") 
 king_of_heart = Card("HEART", "KING")
@@ -39,98 +37,6 @@ class States(Enum):
     LOSE = 7
     BUST = 8
     TIE = 9
-
-
-
-class Entity:
-    def __init__(self, hand_limit: int = None):
-        if hand_limit:
-            self.hand: Hand = Hand.create_hand(hand_limit)
-        else:
-            self.hand: Hand = Hand.create_hand(hand_limit)
-        self.soft_score = 0
-        self.hard_score = 0
-    
-    def hand_score(self) -> int:
-        total = 0
-        if self.hand.hand_size == 0:
-            return total
-        has_ace = self.hand.contains_rank("ACE")
-        
-        if has_ace:
-            low_total = 0
-            for card in self.hand.cards:
-                if card.rank == "ACE":
-                    ace_values = Value[card.rank].value
-                    low_total += ace_values[0]
-                    total += ace_values[1]
-                    continue
-                low_total += Value[card.rank].value
-                total += Value[card.rank].value
-            self.update_score((low_total,total))
-            return (low_total,total)
-        
-        else:
-            total += sum(Value[card.rank].value for card in self.hand.cards)
-            self.update_score(total)
-            return total
-    
-    def update_score(self, score):
-        
-        if isinstance(score, tuple):
-            self.soft_score = score[0]
-            self.hard_score = score[1]
-        else:
-            self.hard_score = score
-
-    def get_max_valid_score(self):
-        if self.hard_score == 21 or self.soft_score == 21:
-            return 21
-        elif self.hard_score > 21:
-            if self.soft_score != 0:
-                return self.soft_score
-            else:
-                return 21 - self.hard_score
-        else:
-            return max(self.hard_score, self.soft_score)
-
-    def get_soft_score(self) -> int:
-        return self.soft_score
-    
-    def get_hard_score(self) -> int:
-        return self.hard_score
-
-
-
-class Player(Entity): 
-    def __init__(self, hand_limit: int = None):
-        super().__init__(hand_limit)
-        self.has_natural_blackjack = False
-    def __str__(self):
-        return (f"The player has {self.hand.hand_size}")
-    
-    
-
-class Dealer(Entity): 
-    def __init__(self, hand_limit: int = None):
-        super().__init__(hand_limit)
-        self.up_card = None
-        self.hole_card = None
-    def __str__(self):
-        return (f"The Dealer has {self.hand.hand_size}")
-    #must hit if score below 16, dealer hits on soft 17, stop at hard 17
-    def hard17(self, deck: Deck):
-        self.update_score(self.hand_score())
-        if self.get_hard_score() == 21:
-            return
-        while self.hard_score < 17 or (self.soft_score < 17 and self.soft_score != 0):
-            self.hand.add_card(deck.deal_card(True))
-            self.update_score(self.hand_score())
-    def get_up_card(self):
-        if len(self.hand.cards) != 0:
-            return self.hand.cards[0]
-        else:
-            print("Dealer has no cards")
 
 
 
@@ -254,9 +160,8 @@ class BlackJack:
         return curr_state
 
 
-    #dealer_peak = state 5
+   
     def dealer_peak(deck: Deck, player: Player, dealer: Dealer) -> str:
-        print("here")
         dealer.update_score(dealer.hand_score())
         dealer_score = dealer.get_max_valid_score()
         if dealer_score == 21:

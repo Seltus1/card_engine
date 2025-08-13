@@ -1,35 +1,6 @@
 from dataclasses import dataclass, field
-from enum import Enum
+from models.enums import *
 from random import shuffle
-
-
-class Suit(Enum):
-    SPADE = 1
-    CLUB = 2
-    HEART = 3
-    DIAMOND = 4
-
-
-class Rank(Enum):
-    ACE = 1
-    TWO = 2
-    THREE = 3
-    FOUR = 4
-    FIVE = 5
-    SIX = 6
-    SEVEN = 7
-    EIGHT = 8
-    NINE = 9
-    TEN = 10
-    JACK = 11
-    QUEEN = 12
-    KING = 13
-
-class Symbols(Enum):
-    SPADE = '♣'
-    CLUB = '♠'
-    HEART = '♥'
-    DIAMOND = '♦'
 
 
 @dataclass(frozen=True)
@@ -134,8 +105,3 @@ class Hand:
     
     def __str__(self):
         return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)
-
-# x = Deck.create_deck()
-
-# p = x.deal_card()
-# print(f"{p.rank} and {p.suit}")
