@@ -1,4 +1,9 @@
 import timeit
+import numpy as np
+
+rows, cols = 3, 4
+grid = np.zeros((rows, cols), dtype=int)
+print(grid)
 def check_in_set():
     natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
     rank = "KING"
@@ -15,3 +20,8 @@ time_taken_set = timeit.timeit(check_in_set, number=1000)
 print(f"The time taken for the set function is {time_taken_set} after 1000 iters")
 print("----------------")
 print(f"The time taken for the LIST function is {time_taken_list} after 1000 iters")
+
+print()
+rows, cols = 3, 4
+grid = np.zeros((rows, cols), dtype=int)
+print(grid)

@@ -11,7 +11,7 @@ class Card:
     def __str__(self):
         return f"{self.rank} of {self.suit}"
     
-    def print_card(self, rank, suit):
+    def  ascii_card(self):
         """
         Prints an ASCII representation of a single playing card.
 
@@ -23,25 +23,18 @@ class Card:
         bottom = "└─────────┘"
         side = "│         │"
 
-        if rank == "10":  # Ten is the only rank with two digits
-            rank_right = self.rank
-            rank_left = self.rank
+        if self.rank == "10":  # Ten is the only rank with two digits
+            rank_right = Ascii_Rank[self.rank].value
+            rank_left = Ascii_Rank[self.rank].value
         else:
-            rank_right = self.rank + " "
-            rank_left = " " + self.rank
+            rank_right = Ascii_Rank[self.rank].value + " "
+            rank_left = " " + Ascii_Rank[self.rank].value
 
-        suit_line = f"│    {self.suit}    │"
+        suit_line = f"│    {Symbols[self.suit].value}    │"
         rank_line_left = f"│{rank_left}       │"
         rank_line_right = f"│       {rank_right}│"
-
-        print(top)
-        print(rank_line_left)
-        print(side)
-        print(suit_line)
-        print(side)
-        print(rank_line_right)
-        print(bottom)
-
+        lines_of_cards = [top, rank_line_left, side, suit_line, side, rank_line_right, bottom]
+        return lines_of_cards
 
 
 @dataclass
@@ -102,6 +95,19 @@ class Hand:
     
     def contains_rank(self, target: str):
         return any(card.rank == target for card in self.cards)
-    
+    # i and j, i is changing fastsr than j, therefore i should be in the most inner loop
     def __str__(self):
+        word = ""
+        for i in range(0, 7):
+            # if i % 4 == 0:
+            #         print() 
+            for card in self.cards:
+                card_str = card.ascii_card()
+                word += card_str[i] + "\t"
+            print(word)
+            if i == 6:
+                print()
+            word = ""
+
+                
         return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)
