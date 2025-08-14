@@ -140,6 +140,9 @@ def print_cards(cards: list[Card]):
         count -= 1
 
     padding = ""
+    sleepTime = .03
+    decay = .00025
+    minSleepTime = .008
     while len(card_location) > 0:
         cards_to_print = len(card_location)
         for card in card_location:
@@ -177,7 +180,10 @@ def print_cards(cards: list[Card]):
                     build_string = padding + build_string
 
                 print(build_string, end="", flush=True)
-                time.sleep(0.005)
+                time.sleep(sleepTime)
+                sleepTime -= decay
+                if(sleepTime < minSleepTime):
+                    sleepTime = minSleepTime
             
             card_location[card] += 1
         
@@ -196,7 +202,7 @@ def print_cards(cards: list[Card]):
 
 if __name__ == "__main__":
     cards = []
-    for i in range(5):
+    for i in range(10):
         random_suit = random.choice(list(Symbols))
         random_rank = random.choice(list(Ascii_Rank))
         random_card = Card(random_suit, random_rank)
