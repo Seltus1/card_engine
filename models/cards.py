@@ -1,6 +1,6 @@
 import time
 import random
-
+import os
 from dataclasses import dataclass, field
 from enums import *
 from random import shuffle
@@ -115,9 +115,20 @@ def get_ranks(card: Card) -> tuple[str, str]:
     right_rank = card.rank.value + " " if card.rank.value != "10" else "10"
     left_rank = " " + card.rank.value if card.rank.value != "10" else "10"
     return right_rank, left_rank
+def determineCardColor(suit):
+    match suit:
+        case Symbols.HEART:
+            return "\033[91m"
+        case Symbols.DIAMOND:
+            return "\033[38;5;214m"
+        case Symbols.SPADE:
+            return "\033[92m"
+        case Symbols.CLUB:
+            return "\033[94m"
 
 
 def print_cards(cards: list[Card]):
+    os.system('color')
     card_builder = {
         "top":             ["┌", "─", "─", "─", "─", "─", "─", "─", "─", "─┐"],
         "bottom":          ["└", "─", "─", "─", "─", "─", "─", "─", "─", "─┘"],
@@ -126,7 +137,6 @@ def print_cards(cards: list[Card]):
         "rank_line_left":  ["│", "{rank_left}", " ", " ", " ", " ", " ", " ", " ", "│"],
         "rank_line_right": ["│", " ", " ", " ", " ", " ", " ", " ", "{rank_right}", "│"],
     }
-
     build_order = ["top", "rank_line_left", "side", "suit_line", "side", "rank_line_right", "bottom"]
 
     skipables = ["bottom", "side", "suit_line", "rank_line_left", "rank_line_right"]
@@ -166,7 +176,6 @@ def print_cards(cards: list[Card]):
 
                 if can_skip and order in skip_8 and index == 8:
                     break
-
                 if order == "suit_line" and index == 5:
                     build_string = build_string.format(symbol=card.suit.value)
                 elif order == "rank_line_left" and index == 1:
@@ -178,8 +187,8 @@ def print_cards(cards: list[Card]):
                 
                 if padding != "" and first_print:
                     build_string = padding + build_string
-
-                print(build_string, end="", flush=True)
+                cardColor = determineCardColor(card.suit)
+                print(f"{cardColor}{build_string}\x1b[0m", end="", flush=True)
                 time.sleep(sleepTime)
                 sleepTime -= decay
                 if(sleepTime < minSleepTime):
@@ -198,7 +207,6 @@ def print_cards(cards: list[Card]):
             padding += " " * 8
 
         print()
-
 
 if __name__ == "__main__":
     cards = []
