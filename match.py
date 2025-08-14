@@ -2,6 +2,7 @@ from models.enums import States
 from models.cards import *
 from entities.dealer import Dealer
 from entities.player import Player
+from utils.board_art import print_board
 
 ace_of_spaces = Card("SPADE", "ACE") 
 king_of_heart = Card("HEART", "KING")
@@ -60,6 +61,7 @@ class BlackJack:
         dealer.hand.add_card(deck.deal_card(True))
         player.hand.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
+        print_board(player, dealer)
         natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
         up_card = dealer.get_up_card()
         print(dealer.get_up_card())

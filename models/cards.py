@@ -1,7 +1,7 @@
 import time
 
 from dataclasses import dataclass, field
-from enums import *
+from models.enums import *
 from random import shuffle
 
 
@@ -99,12 +99,13 @@ class Hand:
         return any(card.rank == target for card in self.cards)
     # fix this shit later (or not)
     def __str__(self):
-        for i in range(0, 7):
-            word = ""
-            for card in self.cards:
-                card_str = card.ascii_card()
-                word += card_str[i] + "\t"
-            print(word)
+        print_cards(self.cards)
+        # for i in range(0, 7):
+        #     word = ""
+        #     for card in self.cards:
+        #         card_str = card.ascii_card()
+        #         word += card_str[i] + "\t"
+        #     print(word)
 
 
         return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)
@@ -127,10 +128,10 @@ def print_cards(cards: list[Card]):
     for order in build_order:
         for card in cards:
             for index, build_string in enumerate(card_builder[order]):
-                right_rank = card.rank.value + " " if card.rank.value != "10" else "10"
-                left_rank = " " + card.rank.value if card.rank.value != "10" else "10"
+                right_rank = Ascii_Rank[card.rank].value + " " if card.rank != 10 else 10
+                left_rank = " " + Ascii_Rank[card.rank].value if card.rank != 10 else 10
                 if order == "suit_line" and index == 5:
-                    build_string = build_string.format(symbol=card.suit.value)
+                    build_string = build_string.format(symbol=Symbols[card.suit].value)
                 elif order == "rank_line_left" and index == 1:
                     build_string = build_string.format(rank_left=left_rank)
                 elif order == "rank_line_right" and index == 8:

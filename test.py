@@ -1,9 +1,6 @@
 import timeit
-import numpy as np
 
-rows, cols = 3, 4
-grid = np.zeros((rows, cols), dtype=int)
-print(grid)
+
 def check_in_set():
     natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
     rank = "KING"
@@ -82,3 +79,26 @@ print(text2art("LOSS", font="random"))
 # Emojis
 print(art("heart"))
 print(art("smile"))
+
+
+from art import text2art, tprint
+from rich.console import Console
+from rich.text import Text
+# from rich.markup import escape, markup
+
+console = Console()
+
+ascii_art = text2art("Dealer's Hand", font="charact1-small")
+print(ascii_art)
+tprint("Dealer's Hand", font="small")
+
+from art import text2art
+from rich.console import Console
+
+console = Console()
+
+ascii_art = text2art("WINNER", font="random")
+console.print(ascii_art, style="green", markup=False)
+print(ascii_art)
+
+console.print(Text(ascii_thing, style="green"))
