@@ -11,6 +11,7 @@ class Card:
     rank: int
 
     def __str__(self):
+        print_cards([self])
         return f"{self.rank} of {self.suit}"
     
     def  ascii_card(self):
@@ -106,9 +107,9 @@ class Hand:
         #         card_str = card.ascii_card()
         #         word += card_str[i] + "\t"
         #     print(word)
+        return ""
 
 
-        return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)
 
 
 

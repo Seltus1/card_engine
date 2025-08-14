@@ -2,7 +2,7 @@ from models.enums import States
 from models.cards import *
 from entities.dealer import Dealer
 from entities.player import Player
-from utils.board_art import print_board
+from utils.board_art import *
 
 ace_of_spaces = Card("SPADE", "ACE") 
 king_of_heart = Card("HEART", "KING")
@@ -29,11 +29,11 @@ class BlackJack:
                     game_over = True
 
                 case States.PLAYER:
-                    curr_state = BlackJack.player_state(deck, player)
+                    curr_state = BlackJack.player_state(deck, player, dealer)
                 
                 case States.BUST:
                     print("Womp womp, there goes the kid's college fund..")
-                    print(player.hand)
+                    print_loser()
                     game_over = True
 
                 case States.DEALER_PEAK:
@@ -44,10 +44,12 @@ class BlackJack:
                     
                 case States.WIN:
                     print("ONE MORE ROUND CANT HURT")
+                    print_winner()
                     game_over = True
 
                 case States.LOSE:
                     print("TRY AGAIN, NERD!")
+                    print_loser()
                     game_over = True
                 
                 case States.TIE:
@@ -64,7 +66,6 @@ class BlackJack:
         print_board(player, dealer)
         natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
         up_card = dealer.get_up_card()
-        print(dealer.get_up_card())
         player.update_score(player.hand_score())
         if player.soft_score == 21 or player.hard_score == 21:
             print(player.hand)
@@ -80,13 +81,13 @@ class BlackJack:
 
     
     #player can hit, stand, double down(later), 
-    def player_state(deck: Deck, player: Player):
+    def player_state(deck: Deck, player: Player, dealer: Dealer):
         print("Enter the following:")
         print("H to hit, D for double down, S for stand")
         end_turn = False
 
         while not end_turn:
-            print(player.hand)
+            # print(player.hand)
             user_input = player.decide_action()
             match user_input.upper():
                 case "H":
@@ -94,12 +95,13 @@ class BlackJack:
                     player.update_score(player.hand_score())
 
                     if player.hard_score == 21 or player.soft_score == 21:
-                        print(player.hand)
+                        # print(player.hand)
                         return States.ROUNDOVER
                     if player.hard_score > 21 and player.soft_score > 21:
                         return States.BUST
                     elif player.hard_score > 21 and player.soft_score == 0:
                         return States.BUST
+                    print_board(player, dealer)
                     
                 case "S":
                     player.update_score(player.hand_score())

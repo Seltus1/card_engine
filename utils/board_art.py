@@ -4,6 +4,7 @@ from rich.text import Text
 from entities.dealer import Dealer
 from entities.player import Player
 
+console = Console()
 ascii_win = """
  .----------------.  .----------------.  .-----------------. .-----------------. .----------------.  .----------------. 
 | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
@@ -34,7 +35,13 @@ ascii_lose = """
 
 def print_board(player: Player, dealer: Dealer):
     tprint("Dealer's Hand", font="small")
-    print(dealer.hand)
+    print(dealer.get_up_card())
     print("##########################")
     tprint("Player's Hand", font="small")
     print(player.hand)
+
+def print_winner():
+    console.print(Text(ascii_win, style="green"))
+
+def print_loser():
+    console.print(Text(ascii_lose, style="red"))
