@@ -97,8 +97,8 @@ from rich.console import Console
 
 console = Console()
 
-ascii_art = text2art("WINNER", font="random")
-Console.print(ascii_art, style="green", markup=False)
+ascii_art = text2art("Womp womp, there goes the kid's college fund..", font="doom")
+console.print(ascii_art, style="green", markup=False)
 print(ascii_art)
 
 Console.print(Text(ascii_thing, style="green"))

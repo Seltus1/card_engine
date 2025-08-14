@@ -70,3 +70,5 @@ class States(Enum):
     LOSE = "LOSE" #7
     BUST = "BUST" #8
     TIE = "TIE" #9
+    CHOOSE = "CHOOSE"
+    GAMEOVER = "GAMEOVER"

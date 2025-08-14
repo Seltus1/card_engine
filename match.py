@@ -26,7 +26,7 @@ class BlackJack:
                     curr_state = BlackJack.deal_state(deck, player, dealer)
                 case States.BLACKJACK:
                     print("glizzymaxx!!!")
-                    game_over = True
+                    curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.PLAYER:
                     curr_state = BlackJack.player_state(deck, player, dealer)
@@ -34,7 +34,9 @@ class BlackJack:
                 case States.BUST:
                     print("Womp womp, there goes the kid's college fund..")
                     print_loser()
-                    game_over = True
+                    print(player.hand)
+                    curr_state = BlackJack.choose_state(player, dealer)
+
 
                 case States.DEALER_PEAK:
                     curr_state = BlackJack.dealer_peak(deck, player, dealer)
@@ -45,15 +47,18 @@ class BlackJack:
                 case States.WIN:
                     print("ONE MORE ROUND CANT HURT")
                     print_winner()
-                    game_over = True
+                    curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.LOSE:
                     print("TRY AGAIN, NERD!")
                     print_loser()
-                    game_over = True
+                    curr_state = BlackJack.choose_state(player, dealer)
                 
                 case States.TIE:
                     print("It's always been rigged..")
+                    curr_state = BlackJack.choose_state(player, dealer)
+                
+                case States.GAMEOVER:
                     game_over = True
 
 
@@ -143,11 +148,23 @@ class BlackJack:
                 print(f"shit on dealer: {dealer.hand}")
                 print()
                 print(f"Player hand: {player.hand}")
-                return States.WIN
+                return States.LOSE
         elif player.has_natural_blackjack:
             return States.BLACKJACK
             
         return States.PLAYER
+    
+    def choose_state(player: Player, dealer: Dealer):
+        print("Are you tired of winning?")
+        print("Type q to quit or g to gamble more")
+        action = player.decide_action()
+        match action:
+            case "q":
+                return States.GAMEOVER
+            case "g":
+                player.reset()
+                dealer.reset()
+                return States.DEAL
             
 
 BlackJack.run_game()

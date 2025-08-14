@@ -12,7 +12,7 @@ class Card:
 
     def __str__(self):
         print_cards([self])
-        return f"{self.rank} of {self.suit}"
+        return ""
     
     def  ascii_card(self):
         """
