@@ -1,5 +1,7 @@
+import time
+
 from dataclasses import dataclass, field
-from models.enums import *
+from enums import *
 from random import shuffle
 
 
@@ -106,3 +108,39 @@ class Hand:
 
 
         return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)
+
+
+
+
+def print_cards(cards: list[Card]):
+    card_builder = {
+        "top":             ["┌", "─", "─", "─", "─", "─", "─", "─", "─", "─┐"],
+        "bottom":          ["└", "─", "─", "─", "─", "─", "─", "─", "─", "─┘"],
+        "side":            ["│", " ", " ", " ", " ", " ", " ", " ", " ", " ", "│"],
+        "suit_line":       ["│", " ", " ", " ", " ", "{symbol}", " ", " ", " ", " ", "│"],
+        "rank_line_left":  ["│", "{rank_left}", " ", " ", " ", " ", " ", " ", " ", "│"],
+        "rank_line_right": ["│", " ", " ", " ", " ", " ", " ", " ", "{rank_right}", "│"],
+    }
+
+    build_order = ["top", "rank_line_left", "side", "suit_line", "side", "rank_line_right", "bottom"]
+
+    for order in build_order:
+        for card in cards:
+            for index, build_string in enumerate(card_builder[order]):
+                right_rank = card.rank.value + " " if card.rank.value != "10" else "10"
+                left_rank = " " + card.rank.value if card.rank.value != "10" else "10"
+                if order == "suit_line" and index == 5:
+                    build_string = build_string.format(symbol=card.suit.value)
+                elif order == "rank_line_left" and index == 1:
+                    build_string = build_string.format(rank_left=left_rank)
+                elif order == "rank_line_right" and index == 8:
+                    build_string = build_string.format(rank_right=right_rank)
+                print(build_string, end="", flush=True)
+                time.sleep(0.005)
+            print("\t", end="", flush=True)
+        
+        print()
+
+
+if __name__ == "__main__":
+    print_cards([Card(Symbols.HEART, Ascii_Rank.ACE), Card(Symbols.DIAMOND, Ascii_Rank.TEN), Card(Symbols.CLUB, Ascii_Rank.JACK), Card(Symbols.SPADE, Ascii_Rank.QUEEN)])
