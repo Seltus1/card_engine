@@ -97,31 +97,12 @@ class Hand:
         return any(card.rank == target for card in self.cards)
     # fix this shit later (or not)
     def __str__(self):
-        # word = ""
         for i in range(0, 7):
             word = ""
-            # if i % 4 == 0:
-            #         print() 
-            # for card in self.cards:
-            #     card_str = card.ascii_card()
-            #     word += card_str[i] + "\t"
-
-            for j, card in enumerate(self.cards, start=1):
+            for card in self.cards:
                 card_str = card.ascii_card()
-                #     print("hello")
-                #     card_str += "\n"
-                    # print(word)
-                    # word = ""
-                    # # word += card_str[i] + "\t"
-                    # continue
                 word += card_str[i] + "\t"
-                # if j  % 3 == 0 and i == 0 :
-                #     print(word)
-                #     word = "" 
-                # if j % 4 == 3 and i ==6:
-                #     print()
-
             print(word)
 
-                
+
         return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)

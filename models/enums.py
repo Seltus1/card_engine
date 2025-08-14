@@ -58,15 +58,15 @@ class Value(Enum):
     KING = 10
 
 class States(Enum):
-    DEAL = 1
-    PLAYER = 2
+    DEAL = "DEAL" #1
+    PLAYER = "PLAYER" #2
     #player stands
-    ROUNDOVER = 3
+    ROUNDOVER = "ROUNDOVER" #3
     #Ace + 10 value on the deal
-    BLACKJACK = 4
+    BLACKJACK = "BLACKJACK" #4
     # 9 + 10
-    DEALER_PEAK = 5
-    WIN = 6
-    LOSE = 7
-    BUST = 8
-    TIE = 9
+    DEALER_PEAK = "DEALER_PEAK" #5
+    WIN = "WIN" #6
+    LOSE = "LOSE" #7
+    BUST = "BUST" #8
+    TIE = "TIE" #9

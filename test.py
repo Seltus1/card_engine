@@ -36,3 +36,49 @@ hand.add_card(ace_of_spaces)
 hand.add_card(ace_of_spaces)
 print(hand)
 
+from rich import print
+from rich.panel import Panel
+
+print(Panel("Welcome to [bold red]BLACKJACK[/bold red]!", expand=False))
+
+from art import *
+print(text2art("BLACKJACK"))
+
+from rich import print
+from rich.panel import Panel
+from rich.console import Console
+from rich.table import Table
+
+console = Console()
+
+# Styled text
+print("[bold red]BLACKJACK[/bold red] [green]IS ON![/green]")
+
+# Panel (like a box)
+print(Panel("Welcome to [bold yellow]BLACKJACK[/bold yellow]!", expand=False))
+
+# Table (great for cards)
+table = Table(title="Player Hand")
+table.add_column("Card", style="cyan", no_wrap=True)
+table.add_column("Value", style="magenta")
+table.add_row("Ace of Spades", "11")
+table.add_row("7 of Hearts", "7")
+console.print(table)
+
+# Combining effects
+print("[bold green on black]YOU WIN![/bold green on black]")
+
+# Text banner
+print(text2art("BLACKJACK"))
+
+# Predefined ASCII figures
+print(art("coffee"))     # prints a coffee cup
+print(art("dragon"))     # prints a dragon figure
+
+# Fun fonts for text
+print(text2art("WIN", font="block"))
+print(text2art("LOSS", font="random"))
+
+# Emojis
+print(art("heart"))
+print(art("smile"))

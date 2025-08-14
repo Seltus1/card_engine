@@ -11,7 +11,7 @@ class BlackJack:
     def __init__(self):
         pass
     def run_game():
-        curr_state = States(1).name
+        curr_state = States.DEAL
         deck = Deck.create_deck()
         
         game_over = False
@@ -21,35 +21,35 @@ class BlackJack:
         while not game_over:
 
             match curr_state:
-                case "DEAL":
+                case States.DEAL:
                     curr_state = BlackJack.deal_state(deck, player, dealer)
-                case "BLACKJACK":
+                case States.BLACKJACK:
                     print("glizzymaxx!!!")
                     game_over = True
 
-                case "PLAYER":
+                case States.PLAYER:
                     curr_state = BlackJack.player_state(deck, player)
                 
-                case "BUST":
+                case States.BUST:
                     print("Womp womp, there goes the kid's college fund..")
                     print(player.hand)
                     game_over = True
 
-                case "DEALER_PEAK":
+                case States.DEALER_PEAK:
                     curr_state = BlackJack.dealer_peak(deck, player, dealer)
 
-                case "ROUNDOVER":
+                case States.ROUNDOVER:
                     curr_state = BlackJack.roundover_state(deck, player, dealer)
                     
-                case "WIN":
+                case States.WIN:
                     print("ONE MORE ROUND CANT HURT")
                     game_over = True
 
-                case "LOSE":
+                case States.LOSE:
                     print("TRY AGAIN, NERD!")
                     game_over = True
                 
-                case "TIE":
+                case States.TIE:
                     print("It's always been rigged..")
                     game_over = True
 
@@ -68,13 +68,13 @@ class BlackJack:
             print(player.hand)
             #change this to dealer peak
             player.has_natural_blackjack = True
-            return States(5).name
+            return States.DEALER_PEAK
         
         
         if up_card.rank in natural_ranks:
-            return States(5).name
+            return States.DEALER_PEAK
         dealer.update_score(dealer.hand_score())
-        return States(2).name
+        return States.PLAYER
 
     
     #player can hit, stand, double down(later), 
@@ -93,15 +93,15 @@ class BlackJack:
 
                     if player.hard_score == 21 or player.soft_score == 21:
                         print(player.hand)
-                        return States(3).name
+                        return States.ROUNDOVER
                     if player.hard_score > 21 and player.soft_score > 21:
-                        return States(8).name
+                        return States.BUST
                     elif player.hard_score > 21 and player.soft_score == 0:
-                        return States(8).name
+                        return States.BUST
                     
                 case "S":
                     player.update_score(player.hand_score())
-                    return States(3).name
+                    return States.ROUNDOVER
                 
                 case "D":
                     print("Not yet implemented")
@@ -116,11 +116,11 @@ class BlackJack:
         print(f"The scores are for player {player_final_score} and dealer {dealer_final_score}")
         print()
         if player_final_score > dealer_final_score:
-            curr_state = States(6).name
+            curr_state = States.WIN
         elif player_final_score < dealer_final_score:
-            curr_state = States(7).name
+            curr_state = States.LOSE
         else:
-            curr_state = States(9).name
+            curr_state = States.TIE
         print(f"Dealer: {dealer.hand} and final score {dealer_final_score}")
         print(f"Final score: {player_final_score} Player {player.hand}")
         return curr_state
@@ -134,16 +134,16 @@ class BlackJack:
             if player.has_natural_blackjack:
                 #tie
                 print(f"Unlucky...{dealer.hand}")
-                return States(9).name
+                return States.TIE
             else:
                 print(f"shit on dealer: {dealer.hand}")
                 print()
                 print(f"Player hand: {player.hand}")
-                return States(6).name
+                return States.WIN
         elif player.has_natural_blackjack:
-            return States(4).name
+            return States.BLACKJACK
             
-        return States(2).name
+        return States.PLAYER
             
 
 BlackJack.run_game()
