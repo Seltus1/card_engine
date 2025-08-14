@@ -5,3 +5,6 @@ class Player(Entity):
         self.has_natural_blackjack = False
     def __str__(self):
         return (f"The player has {self.hand.hand_size}")
+    
+    def decide_action(self):
+        return input()

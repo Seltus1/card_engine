@@ -23,12 +23,12 @@ class Card:
         bottom = "└─────────┘"
         side = "│         │"
 
-        if self.rank == "10":  # Ten is the only rank with two digits
-            rank_right = Ascii_Rank[self.rank].value
-            rank_left = Ascii_Rank[self.rank].value
+        if self.rank == 10:  # Ten is the only rank with two digits
+            rank_right = f"{Ascii_Rank[self.rank].value:2}" 
+            rank_left =  f"{Ascii_Rank[self.rank].value:2}"
         else:
-            rank_right = Ascii_Rank[self.rank].value + " "
-            rank_left = " " + Ascii_Rank[self.rank].value
+            rank_right = f"{Ascii_Rank[self.rank].value:<2}"
+            rank_left =  f"{Ascii_Rank[self.rank].value:>2}"
 
         suit_line = f"│    {Symbols[self.suit].value}    │"
         rank_line_left = f"│{rank_left}       │"
@@ -95,19 +95,33 @@ class Hand:
     
     def contains_rank(self, target: str):
         return any(card.rank == target for card in self.cards)
-    # i and j, i is changing fastsr than j, therefore i should be in the most inner loop
+    # fix this shit later (or not)
     def __str__(self):
-        word = ""
+        # word = ""
         for i in range(0, 7):
+            word = ""
             # if i % 4 == 0:
             #         print() 
-            for card in self.cards:
+            # for card in self.cards:
+            #     card_str = card.ascii_card()
+            #     word += card_str[i] + "\t"
+
+            for j, card in enumerate(self.cards, start=1):
                 card_str = card.ascii_card()
+                #     print("hello")
+                #     card_str += "\n"
+                    # print(word)
+                    # word = ""
+                    # # word += card_str[i] + "\t"
+                    # continue
                 word += card_str[i] + "\t"
+                # if j  % 3 == 0 and i == 0 :
+                #     print(word)
+                #     word = "" 
+                # if j % 4 == 3 and i ==6:
+                #     print()
+
             print(word)
-            if i == 6:
-                print()
-            word = ""
 
                 
         return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)

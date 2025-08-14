@@ -85,7 +85,7 @@ class BlackJack:
 
         while not end_turn:
             print(player.hand)
-            user_input = input()
+            user_input = player.decide_action()
             match user_input.upper():
                 case "H":
                     player.hand.add_card(deck.deal_card(True))
@@ -136,7 +136,7 @@ class BlackJack:
                 print(f"Unlucky...{dealer.hand}")
                 return States(9).name
             else:
-                print(f"shit on {dealer.hand}")
+                print(f"shit on dealer: {dealer.hand}")
                 print()
                 print(f"Player hand: {player.hand}")
                 return States(6).name

@@ -17,11 +17,22 @@ def check_in_list():
 time_taken_list = timeit.timeit(check_in_list, number=1000)
 time_taken_set = timeit.timeit(check_in_set, number=1000)
 
-print(f"The time taken for the set function is {time_taken_set} after 1000 iters")
-print("----------------")
-print(f"The time taken for the LIST function is {time_taken_list} after 1000 iters")
+# print(f"The time taken for the set function is {time_taken_set} after 1000 iters")
+# print("----------------")
+# print(f"The time taken for the LIST function is {time_taken_list} after 1000 iters")
 
-print()
-rows, cols = 3, 4
-grid = np.zeros((rows, cols), dtype=int)
-print(grid)
+# print()
+# rows, cols = 3, 4
+# grid = np.zeros((rows, cols), dtype=int)
+# print(grid)
+
+from models.cards import *
+hand = Hand(10)
+ace_of_spaces = Card("SPADE", "ACE") 
+hand.add_card(ace_of_spaces)
+hand.add_card(ace_of_spaces)
+hand.add_card(ace_of_spaces)
+hand.add_card(ace_of_spaces)
+hand.add_card(ace_of_spaces)
+print(hand)
+
