@@ -98,19 +98,19 @@ class Hand:
     
     def contains_rank(self, target: str):
         return any(card.rank == target for card in self.cards)
-    # fix this shit later (or not)
+    
+
+    
     def __str__(self):
         print_cards(self.cards)
-        # for i in range(0, 7):
-        #     word = ""
-        #     for card in self.cards:
-        #         card_str = card.ascii_card()
-        #         word += card_str[i] + "\t"
-        #     print(word)
         return ""
 
 
-
+def get_ranks(card: Card):
+    value = Ascii_Rank[card.rank].value
+    right_rank = value + " " if value != "10" else "10"
+    left_rank = " " + value if value != "10" else "10"
+    return left_rank, right_rank
 
 
 
@@ -126,12 +126,39 @@ def print_cards(cards: list[Card]):
 
     build_order = ["top", "rank_line_left", "side", "suit_line", "side", "rank_line_right", "bottom"]
 
-    for order in build_order:
-        for card in cards:
+    skip_7 = ["rank_line_left"]
+    skip_8 = ["side", "bottom", "suit_line", "rank_line_right"]
+
+    count = 0
+    card_location = {}
+    for card in cards:
+        card_location[card] = count
+        count -= 1
+
+    padding = ""
+    while len(card_location) > 0:
+        cards_to_print = len(card_location)
+        for card in card_location:
+            if card_location[card] < 0:
+                cards_to_print -= 1
+                continue
+            
+        for card_index, (card, build_index) in enumerate(card_location.items()):
+            if build_index < 0:
+                card_location[card] += 1
+                continue
+
+            order = build_order[build_index]
+            left_rank, right_rank = get_ranks(card)
+            can_skip = card_index < cards_to_print - 1
             for index, build_string in enumerate(card_builder[order]):
-                value = Ascii_Rank[card.rank].value
-                right_rank = value + " " if value != "10" else "10"
-                left_rank = " " + value if value != "10" else "10"
+
+                # Checking when to stop printing for this card
+                if can_skip and order in skip_7 and index == 7:
+                    break
+
+                if can_skip and order in skip_8 and index == 8:
+                    break
 
                 if order == "suit_line" and index == 5:
                     build_string = build_string.format(symbol=Symbols[card.suit].value)
@@ -139,12 +166,27 @@ def print_cards(cards: list[Card]):
                     build_string = build_string.format(rank_left=left_rank)
                 elif order == "rank_line_right" and index == 8:
                     build_string = build_string.format(rank_right=right_rank)
-                    
-                print(build_string, end="", flush=True)
-                time.sleep(0.0025)
 
-            print("\t", end="", flush=True)
+                first_print = card_index == 0 and index == 0
+                
+                if padding != "" and first_print:
+                    build_string = padding + build_string
+
+                print(build_string, end="", flush=True)
+                time.sleep(0.005)
+            
+            card_location[card] += 1
         
+        delete_cards = None
+        for card in card_location:
+            if card_location[card] >= 7:
+                delete_cards = card
+                break
+        
+        if delete_cards is not None:
+            del card_location[delete_cards]
+            padding += " " * 8
+
         print()
 
 
