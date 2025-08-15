@@ -1,5 +1,6 @@
 import time
-
+import random
+import os
 from dataclasses import dataclass, field
 from models.enums import *
 from random import shuffle
@@ -116,9 +117,24 @@ def get_ranks(card: Card):
     left_rank = " " + value if value != "10" else "10"
     return left_rank, right_rank
 
+def get_ranks(card: Card) -> tuple[str, str]:
+    right_rank = card.rank.value + " " if card.rank.value != "10" else "10"
+    left_rank = " " + card.rank.value if card.rank.value != "10" else "10"
+    return right_rank, left_rank
+def determineCardColor(suit):
+    match suit:
+        case Symbols.HEART:
+            return "\033[91m"
+        case Symbols.DIAMOND:
+            return "\033[38;5;214m"
+        case Symbols.SPADE:
+            return "\033[92m"
+        case Symbols.CLUB:
+            return "\033[94m"
 
 
 def print_cards(cards: list[Card]):
+    os.system('color')
     card_builder = {
         "top":             ["┌", "─", "─", "─", "─", "─", "─", "─", "─", "─┐"],
         "bottom":          ["└", "─", "─", "─", "─", "─", "─", "─", "─", "─┘"],
@@ -127,9 +143,10 @@ def print_cards(cards: list[Card]):
         "rank_line_left":  ["│", "{rank_left}", " ", " ", " ", " ", " ", " ", " ", "│"],
         "rank_line_right": ["│", " ", " ", " ", " ", " ", " ", " ", "{rank_right}", "│"],
     }
-
     build_order = ["top", "rank_line_left", "side", "suit_line", "side", "rank_line_right", "bottom"]
 
+    card_print
+    skipables = ["bottom", "side", "suit_line", "rank_line_left", "rank_line_right"]
     skip_7 = ["rank_line_left"]
     skip_8 = ["side", "bottom", "suit_line", "rank_line_right"]
 
@@ -140,6 +157,10 @@ def print_cards(cards: list[Card]):
         count -= 1
 
     padding = ""
+    card_print
+    sleepTime = .03
+    decay = .00025
+    minSleepTime = .008
     while len(card_location) > 0:
         cards_to_print = len(card_location)
         for card in card_location:
@@ -163,6 +184,7 @@ def print_cards(cards: list[Card]):
 
                 if can_skip and order in skip_8 and index == 8:
                     break
+                card_print
 
                 if order == "suit_line" and index == 5:
                     build_string = build_string.format(symbol=Symbols[card.suit].value)
@@ -175,6 +197,13 @@ def print_cards(cards: list[Card]):
                 
                 if padding != "" and first_print:
                     build_string = padding + build_string
+                 card_print
+                cardColor = determineCardColor(card.suit)
+                print(f"{cardColor}{build_string}\x1b[0m", end="", flush=True)
+                time.sleep(sleepTime)
+                sleepTime -= decay
+                if(sleepTime < minSleepTime):
+                    sleepTime = minSleepTime
 
                 print(build_string, end="", flush=True)
                 time.sleep(0.005)
@@ -190,9 +219,21 @@ def print_cards(cards: list[Card]):
         if delete_cards is not None:
             del card_location[delete_cards]
             padding += " " * 8
+         card_print
 
         print()
 
+        print()
 
 if __name__ == "__main__":
+    card_print
+    cards = []
+    for i in range(10):
+        random_suit = random.choice(list(Symbols))
+        random_rank = random.choice(list(Ascii_Rank))
+        random_card = Card(random_suit, random_rank)
+        cards.append(random_card)
+
+        print_cards(cards)
+
     print_cards([Card(Suit.SPADE, Rank.TEN), Card(Suit.DIAMOND, Rank.TEN), Card(Suit.CLUB, Rank.JACK), Card(Suit.SPADE, Rank.QUEEN)])
