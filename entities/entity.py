@@ -49,6 +49,8 @@ class Entity:
         elif self.hard_score > 21:
             if self.soft_score != 0 and self.soft_score < 22:
                 return self.soft_score
+            elif self.soft_score > 22:
+                return 21 - self.soft_score
             else:
                 return 21 - self.hard_score
         else:

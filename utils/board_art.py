@@ -58,11 +58,12 @@ def text2asci(text: str, font: str):
 def final_print(state: States, player: Player, dealer: Dealer):
         os.system('clear')
         print_board(player, dealer, True)
-        console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
         match state:
             case States.LOSE | States.BUST:
                 console.print(Text(ascii_lose, style="red"))
+                console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
             case States.WIN | States.BLACKJACK:
                 console.print(Text(ascii_win, style="green"))
+                console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
             case States.TIE:
-                console.print(Text(text2art(States.TIE.value, font="block"), style="blue"))     
+                console.print(Text(text2art(States.TIE.value, font="block"), style="blue"))

@@ -68,7 +68,7 @@ class States(Enum):
     DEALER_PEAK = "DEALER_PEAK" #5
     WIN = "ONE MORE ROUND CANT HURT" #6
     LOSE = "TRY AGAIN, NERD!" #7
-    BUST = "Womp womp, there goes the kid's college fund.." #8
+    BUST = "GREEDY OR UNLUCKY..?" #8
     TIE = "It's always been rigged.." #9
     CHOOSE = "CHOOSE"
     GAMEOVER = "GAMEOVER"
