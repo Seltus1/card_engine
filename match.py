@@ -25,14 +25,14 @@ class BlackJack:
                 case States.DEAL:
                     curr_state = BlackJack.deal_state(deck, player, dealer)
                 case States.BLACKJACK:
-                    final_print(States.BLACKJACK, True)
+                    final_print(States.BLACKJACK)
                     curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.PLAYER:
                     curr_state = BlackJack.player_state(deck, player, dealer)
                 
                 case States.BUST:
-                    final_print(States.BUST, True)
+                    final_print(States.BUST)
                     curr_state = BlackJack.choose_state(player, dealer)
 
 
