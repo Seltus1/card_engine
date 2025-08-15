@@ -23,6 +23,7 @@ class BlackJack:
 
             match curr_state:
                 case States.DEAL:
+                    deck.reset()
                     curr_state = BlackJack.deal_state(deck, player, dealer)
                 case States.BLACKJACK:
                     final_print(States.BLACKJACK, player, dealer)
@@ -61,8 +62,6 @@ class BlackJack:
 
     def deal_state(deck: Deck, player: Player, dealer: Dealer):
         print(deck.remaining_cards)
-        if deck.remaining_cards < 15:
-            deck = Deck.create_deck()
         player.hand.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
         player.hand.add_card(deck.deal_card(True))

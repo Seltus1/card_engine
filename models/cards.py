@@ -65,7 +65,11 @@ class Deck:
         if not self.is_empty and can_add:
             return self.cards.pop()
         
-
+    def reset(self):
+        if self.remaining_cards < 15:
+            return self.create_deck()
+        else:
+            return self
 
 @dataclass
 class Hand:
