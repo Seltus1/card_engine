@@ -2,7 +2,7 @@ import time
 import random
 import os
 from dataclasses import dataclass, field
-from enums import *
+from models.enums import *
 from random import shuffle
 
 
@@ -12,7 +12,8 @@ class Card:
     rank: int
 
     def __str__(self):
-        return f"{self.rank} of {self.suit}"
+        print_cards([self])
+        return ""
     
     def  ascii_card(self):
         """
@@ -49,9 +50,9 @@ class Deck:
     @classmethod
     def create_deck(cls) -> 'Deck':
         play_deck = Deck(False, 52)
-        for i in range(1,5):
-            for j in range (1,14):
-                play_deck.cards.append(Card(Suit(i).name, Rank(j).name))
+        for suit_index in range(1,5):
+            for rank_index in range (1,14):
+                play_deck.cards.append(Card(Suit(suit_index).name, Rank(rank_index).name))
         shuffle(play_deck.cards)
         return play_deck
     
@@ -98,18 +99,19 @@ class Hand:
     
     def contains_rank(self, target: str):
         return any(card.rank == target for card in self.cards)
-    # fix this shit later (or not)
+    
+
+    
     def __str__(self):
-        for i in range(0, 7):
-            word = ""
-            for card in self.cards:
-                card_str = card.ascii_card()
-                word += card_str[i] + "\t"
-            print(word)
+        print_cards(self.cards)
+        return ""
 
 
-        return "Hand contains: " + ", ".join(f"{card} " for card in self.cards)
-
+def get_ranks(card: Card):
+    value = Ascii_Rank[card.rank].value
+    right_rank = value + " " if value != "10" else "10"
+    left_rank = " " + value if value != "10" else "10"
+    return left_rank, right_rank
 
 def get_ranks(card: Card) -> tuple[str, str]:
     right_rank = card.rank.value + " " if card.rank.value != "10" else "10"
@@ -139,6 +141,7 @@ def print_cards(cards: list[Card]):
     }
     build_order = ["top", "rank_line_left", "side", "suit_line", "side", "rank_line_right", "bottom"]
 
+    card_print
     skipables = ["bottom", "side", "suit_line", "rank_line_left", "rank_line_right"]
     skip_7 = ["rank_line_left"]
     skip_8 = ["side", "bottom", "suit_line", "rank_line_right"]
@@ -150,6 +153,7 @@ def print_cards(cards: list[Card]):
         count -= 1
 
     padding = ""
+    card_print
     sleepTime = .03
     decay = .00025
     minSleepTime = .008
@@ -176,8 +180,10 @@ def print_cards(cards: list[Card]):
 
                 if can_skip and order in skip_8 and index == 8:
                     break
+                card_print
+
                 if order == "suit_line" and index == 5:
-                    build_string = build_string.format(symbol=card.suit.value)
+                    build_string = build_string.format(symbol=Symbols[card.suit].value)
                 elif order == "rank_line_left" and index == 1:
                     build_string = build_string.format(rank_left=left_rank)
                 elif order == "rank_line_right" and index == 8:
@@ -187,12 +193,16 @@ def print_cards(cards: list[Card]):
                 
                 if padding != "" and first_print:
                     build_string = padding + build_string
+                 card_print
                 cardColor = determineCardColor(card.suit)
                 print(f"{cardColor}{build_string}\x1b[0m", end="", flush=True)
                 time.sleep(sleepTime)
                 sleepTime -= decay
                 if(sleepTime < minSleepTime):
                     sleepTime = minSleepTime
+
+                print(build_string, end="", flush=True)
+                time.sleep(0.005)
             
             card_location[card] += 1
         
@@ -205,10 +215,14 @@ def print_cards(cards: list[Card]):
         if delete_cards is not None:
             del card_location[delete_cards]
             padding += " " * 8
+         card_print
+
+        print()
 
         print()
 
 if __name__ == "__main__":
+    card_print
     cards = []
     for i in range(10):
         random_suit = random.choice(list(Symbols))
@@ -217,3 +231,5 @@ if __name__ == "__main__":
         cards.append(random_card)
 
         print_cards(cards)
+
+    print_cards([Card(Suit.SPADE, Rank.TEN), Card(Suit.DIAMOND, Rank.TEN), Card(Suit.CLUB, Rank.JACK), Card(Suit.SPADE, Rank.QUEEN)])

@@ -2,14 +2,15 @@ from models.enums import States
 from models.cards import *
 from entities.dealer import Dealer
 from entities.player import Player
-
+from utils.board_art import *
+import os
 ace_of_spaces = Card("SPADE", "ACE") 
 king_of_heart = Card("HEART", "KING")
 
 class BlackJack:
 
-    def __init__(self):
-        pass
+
+
     def run_game():
         curr_state = States.DEAL
         deck = Deck.create_deck()
@@ -24,16 +25,16 @@ class BlackJack:
                 case States.DEAL:
                     curr_state = BlackJack.deal_state(deck, player, dealer)
                 case States.BLACKJACK:
-                    print("glizzymaxx!!!")
-                    game_over = True
+                    final_print(States.BLACKJACK, player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.PLAYER:
-                    curr_state = BlackJack.player_state(deck, player)
+                    curr_state = BlackJack.player_state(deck, player, dealer)
                 
                 case States.BUST:
-                    print("Womp womp, there goes the kid's college fund..")
-                    print(player.hand)
-                    game_over = True
+                    final_print(States.BUST, player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer)
+
 
                 case States.DEALER_PEAK:
                     curr_state = BlackJack.dealer_peak(deck, player, dealer)
@@ -42,27 +43,32 @@ class BlackJack:
                     curr_state = BlackJack.roundover_state(deck, player, dealer)
                     
                 case States.WIN:
-                    print("ONE MORE ROUND CANT HURT")
-                    game_over = True
+                    final_print(States.WIN, player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.LOSE:
-                    print("TRY AGAIN, NERD!")
-                    game_over = True
+                    final_print(States.LOSE, player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer)
                 
                 case States.TIE:
                     print("It's always been rigged..")
+                    curr_state = BlackJack.choose_state(player, dealer)
+                
+                case States.GAMEOVER:
                     game_over = True
 
 
 
     def deal_state(deck: Deck, player: Player, dealer: Dealer):
+        print(deck.remaining_cards)
+        if deck.remaining_cards < 15:
+            deck = Deck.create_deck()
         player.hand.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
         player.hand.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
         natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
         up_card = dealer.get_up_card()
-        print(dealer.get_up_card())
         player.update_score(player.hand_score())
         if player.soft_score == 21 or player.hard_score == 21:
             print(player.hand)
@@ -78,13 +84,15 @@ class BlackJack:
 
     
     #player can hit, stand, double down(later), 
-    def player_state(deck: Deck, player: Player):
-        print("Enter the following:")
-        print("H to hit, D for double down, S for stand")
+    def player_state(deck: Deck, player: Player, dealer: Dealer):
         end_turn = False
 
         while not end_turn:
-            print(player.hand)
+            os.system("clear")
+            print_board(player, dealer, False)
+            print("Enter the following:")
+            print("H to hit, D for double down, S for stand")
+            print(deck.remaining_cards)
             user_input = player.decide_action()
             match user_input.upper():
                 case "H":
@@ -92,7 +100,6 @@ class BlackJack:
                     player.update_score(player.hand_score())
 
                     if player.hard_score == 21 or player.soft_score == 21:
-                        print(player.hand)
                         return States.ROUNDOVER
                     if player.hard_score > 21 and player.soft_score > 21:
                         return States.BUST
@@ -101,15 +108,18 @@ class BlackJack:
                     
                 case "S":
                     player.update_score(player.hand_score())
+                    dealer.update_score(dealer.hand_score())
                     return States.ROUNDOVER
                 
                 case "D":
                     print("Not yet implemented")
+                case _:
+                    print("hey")
+                    continue
 
 
                     
     def roundover_state(deck: Deck, player: Player, dealer: Dealer):
-        print(f"Dealer: {dealer.hand}")
         dealer.hard17(deck)
         player_final_score = player.get_max_valid_score()
         dealer_final_score = dealer.get_max_valid_score()
@@ -121,8 +131,6 @@ class BlackJack:
             curr_state = States.LOSE
         else:
             curr_state = States.TIE
-        print(f"Dealer: {dealer.hand} and final score {dealer_final_score}")
-        print(f"Final score: {player_final_score} Player {player.hand}")
         return curr_state
 
 
@@ -139,11 +147,31 @@ class BlackJack:
                 print(f"shit on dealer: {dealer.hand}")
                 print()
                 print(f"Player hand: {player.hand}")
-                return States.WIN
+                return States.LOSE
         elif player.has_natural_blackjack:
             return States.BLACKJACK
             
         return States.PLAYER
-            
+    
+    def choose_state(player: Player, dealer: Dealer):
+        print(text2asci(f"FINAL SCORE! Dealer: {dealer.get_max_valid_score()} and Player: {player.get_max_valid_score()}", "medium"))
+        print("Are you tired of winning?")
+        print("Type q to quit or press Enter to gamble more")
+        while True:
+            action = player.decide_action()
+            match action:
+                case "q":
+                    return States.GAMEOVER
+                case "":
+                    player.reset()
+                    dealer.reset()
+                    os.system('clear')
+                    return States.DEAL
+                case _:
+                    print("Valid input, nerd!")
+        
 
-BlackJack.run_game()
+
+           
+if __name__ == "__main__":
+    BlackJack.run_game()

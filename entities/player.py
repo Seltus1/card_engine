@@ -8,3 +8,8 @@ class Player(Entity):
     
     def decide_action(self):
         return input()
+    
+    def reset(self):
+        super().reset()
+        self.has_natural_blackjack = False
+        
