@@ -9,8 +9,8 @@ king_of_heart = Card("HEART", "KING")
 
 class BlackJack:
 
-    def __init__(self):
-        pass
+
+
     def run_game():
         curr_state = States.DEAL
         deck = Deck.create_deck()
@@ -165,6 +165,8 @@ class BlackJack:
                 player.reset()
                 dealer.reset()
                 return States.DEAL
-            
 
-BlackJack.run_game()
+
+           
+if __name__ == "__main__":
+    BlackJack.run_game()

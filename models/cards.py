@@ -49,9 +49,9 @@ class Deck:
     @classmethod
     def create_deck(cls) -> 'Deck':
         play_deck = Deck(False, 52)
-        for i in range(1,5):
-            for j in range (1,14):
-                play_deck.cards.append(Card(Suit(i).name, Rank(j).name))
+        for suit_index in range(1,5):
+            for rank_index in range (1,14):
+                play_deck.cards.append(Card(Suit(suit_index).name, Rank(rank_index).name))
         shuffle(play_deck.cards)
         return play_deck
     
@@ -129,20 +129,24 @@ def print_cards(cards: list[Card]):
     for order in build_order:
         for card in cards:
             for index, build_string in enumerate(card_builder[order]):
-                right_rank = Ascii_Rank[card.rank].value + " " if card.rank != 10 else 10
-                left_rank = " " + Ascii_Rank[card.rank].value if card.rank != 10 else 10
+                value = Ascii_Rank[card.rank].value
+                right_rank = value + " " if value != "10" else "10"
+                left_rank = " " + value if value != "10" else "10"
+
                 if order == "suit_line" and index == 5:
                     build_string = build_string.format(symbol=Symbols[card.suit].value)
                 elif order == "rank_line_left" and index == 1:
                     build_string = build_string.format(rank_left=left_rank)
                 elif order == "rank_line_right" and index == 8:
                     build_string = build_string.format(rank_right=right_rank)
+                    
                 print(build_string, end="", flush=True)
-                time.sleep(0.005)
+                time.sleep(0.0025)
+
             print("\t", end="", flush=True)
         
         print()
 
 
 if __name__ == "__main__":
-    print_cards([Card(Symbols.HEART, Ascii_Rank.ACE), Card(Symbols.DIAMOND, Ascii_Rank.TEN), Card(Symbols.CLUB, Ascii_Rank.JACK), Card(Symbols.SPADE, Ascii_Rank.QUEEN)])
+    print_cards([Card(Suit.SPADE, Rank.TEN), Card(Suit.DIAMOND, Rank.TEN), Card(Suit.CLUB, Rank.JACK), Card(Suit.SPADE, Rank.QUEEN)])
