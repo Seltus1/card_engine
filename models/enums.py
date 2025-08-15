@@ -63,12 +63,12 @@ class States(Enum):
     #player stands
     ROUNDOVER = "ROUNDOVER" #3
     #Ace + 10 value on the deal
-    BLACKJACK = "BLACKJACK" #4
+    BLACKJACK = "glizzymaxx!!!" #4
     # 9 + 10
     DEALER_PEAK = "DEALER_PEAK" #5
-    WIN = "WIN" #6
-    LOSE = "LOSE" #7
-    BUST = "BUST" #8
-    TIE = "TIE" #9
+    WIN = "ONE MORE ROUND CANT HURT" #6
+    LOSE = "TRY AGAIN, NERD!" #7
+    BUST = "Womp womp, there goes the kid's college fund.." #8
+    TIE = "It's always been rigged.." #9
     CHOOSE = "CHOOSE"
     GAMEOVER = "GAMEOVER"

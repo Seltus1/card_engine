@@ -1,8 +1,10 @@
 from art import text2art, tprint
+from models.enums import States
 from rich.console import Console
 from rich.text import Text
 from entities.dealer import Dealer
 from entities.player import Player
+import os
 
 console = Console()
 ascii_win = """
@@ -33,15 +35,33 @@ ascii_lose = """
  '----------------'                      '----------------'  '----------------'  '----------------'  '----------------' 
 """
 
-def print_board(player: Player, dealer: Dealer):
+def print_board(player: Player, dealer: Dealer, end_game: bool):
+    tprint("Dealer's Hand", font="small")
+    if end_game:
+        print(dealer.hand)
+    else:
+        print(dealer.get_up_card())
+    print("##########################")
+    tprint("Player's Hand", font="small")
+    print(player.hand)
+
+def print_final_board(player: Player, dealer: Dealer):
     tprint("Dealer's Hand", font="small")
     print(dealer.get_up_card())
     print("##########################")
     tprint("Player's Hand", font="small")
     print(player.hand)
 
-def print_winner():
-    console.print(Text(ascii_win, style="green"))
+def text2asci(text: str, font: str):
+    return text2art(text, font)
 
-def print_loser():
-    console.print(Text(ascii_lose, style="red"))
+def final_print(state: States):
+        os.system('clear')
+        console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
+        match state:
+            case States.LOSE | States.BUST:
+                console.print(Text(ascii_lose, style="red"))
+            case States.WIN | States.BLACKJACK:
+                console.print(Text(ascii_win, style="green"))
+            case States.TIE:
+                console.print(Text(text2art(States.TIE.value, font="block"), style="blue"))     
