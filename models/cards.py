@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from models.enums import *
 from random import shuffle
 
-
 @dataclass(frozen=True)
 class Card:
     suit: str
@@ -113,20 +112,18 @@ def get_ranks(card: Card):
     left_rank = " " + value if value != "10" else "10"
     return left_rank, right_rank
 
-def get_ranks(card: Card) -> tuple[str, str]:
-    right_rank = card.rank.value + " " if card.rank.value != "10" else "10"
-    left_rank = " " + card.rank.value if card.rank.value != "10" else "10"
-    return right_rank, left_rank
+
 def determineCardColor(suit):
     match suit:
-        case Symbols.HEART:
+        case "HEART":
             return "\033[91m"
-        case Symbols.DIAMOND:
+        case "DIAMOND":
             return "\033[38;5;214m"
-        case Symbols.SPADE:
+        case "SPADE":
             return "\033[92m"
-        case Symbols.CLUB:
+        case "CLUB":
             return "\033[94m"
+        
 
 
 def print_cards(cards: list[Card]):
@@ -141,7 +138,6 @@ def print_cards(cards: list[Card]):
     }
     build_order = ["top", "rank_line_left", "side", "suit_line", "side", "rank_line_right", "bottom"]
 
-    card_print
     skipables = ["bottom", "side", "suit_line", "rank_line_left", "rank_line_right"]
     skip_7 = ["rank_line_left"]
     skip_8 = ["side", "bottom", "suit_line", "rank_line_right"]
@@ -153,10 +149,9 @@ def print_cards(cards: list[Card]):
         count -= 1
 
     padding = ""
-    card_print
-    sleepTime = .03
-    decay = .00025
-    minSleepTime = .008
+    sleepTime = .01
+    decay = .0025
+    minSleepTime = .004
     while len(card_location) > 0:
         cards_to_print = len(card_location)
         for card in card_location:
@@ -170,7 +165,7 @@ def print_cards(cards: list[Card]):
                 continue
 
             order = build_order[build_index]
-            left_rank, right_rank = get_ranks(card)
+            left_rank, right_rank = get_ranks(card=card)
             can_skip = card_index < cards_to_print - 1
             for index, build_string in enumerate(card_builder[order]):
 
@@ -180,7 +175,6 @@ def print_cards(cards: list[Card]):
 
                 if can_skip and order in skip_8 and index == 8:
                     break
-                card_print
 
                 if order == "suit_line" and index == 5:
                     build_string = build_string.format(symbol=Symbols[card.suit].value)
@@ -193,16 +187,13 @@ def print_cards(cards: list[Card]):
                 
                 if padding != "" and first_print:
                     build_string = padding + build_string
-                 card_print
                 cardColor = determineCardColor(card.suit)
                 print(f"{cardColor}{build_string}\x1b[0m", end="", flush=True)
                 time.sleep(sleepTime)
                 sleepTime -= decay
                 if(sleepTime < minSleepTime):
                     sleepTime = minSleepTime
-
-                print(build_string, end="", flush=True)
-                time.sleep(0.005)
+                time.sleep(sleepTime)
             
             card_location[card] += 1
         
@@ -215,14 +206,10 @@ def print_cards(cards: list[Card]):
         if delete_cards is not None:
             del card_location[delete_cards]
             padding += " " * 8
-         card_print
-
-        print()
 
         print()
 
 if __name__ == "__main__":
-    card_print
     cards = []
     for i in range(10):
         random_suit = random.choice(list(Symbols))
