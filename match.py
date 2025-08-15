@@ -92,6 +92,7 @@ class BlackJack:
             print_board(player, dealer, False)
             print("Enter the following:")
             print("H to hit, D for double down, S for stand")
+            print(deck.remaining_cards)
             user_input = player.decide_action()
             match user_input.upper():
                 case "H":
@@ -156,16 +157,19 @@ class BlackJack:
         print(text2asci(f"FINAL SCORE! Dealer: {dealer.get_max_valid_score()} and Player: {player.get_max_valid_score()}", "medium"))
         print("Are you tired of winning?")
         print("Type q to quit or press Enter to gamble more")
-        action = player.decide_action()
-        match action:
-            case "q":
-                return States.GAMEOVER
-            case "":
-                player.reset()
-                dealer.reset()
-                os.system('clear')
-                return States.DEAL
-    
+        while True:
+            action = player.decide_action()
+            match action:
+                case "q":
+                    return States.GAMEOVER
+                case "":
+                    player.reset()
+                    dealer.reset()
+                    os.system('clear')
+                    return States.DEAL
+                case _:
+                    print("Valid input, nerd!")
+        
 
 
            

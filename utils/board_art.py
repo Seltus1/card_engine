@@ -66,4 +66,4 @@ def final_print(state: States, player: Player, dealer: Dealer):
                 console.print(Text(ascii_win, style="green"))
                 console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
             case States.TIE:
-                console.print(Text(text2art(States.TIE.value, font="block"), style="blue"))
+                console.print(Text(text2art(state.value, "xhelvi"), style="blue"))
