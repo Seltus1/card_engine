@@ -55,8 +55,9 @@ def print_final_board(player: Player, dealer: Dealer):
 def text2asci(text: str, font: str):
     return text2art(text, font)
 
-def final_print(state: States):
+def final_print(state: States, player: Player, dealer: Dealer):
         os.system('clear')
+        print_board(player, dealer, True)
         console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
         match state:
             case States.LOSE | States.BUST:

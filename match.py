@@ -25,14 +25,14 @@ class BlackJack:
                 case States.DEAL:
                     curr_state = BlackJack.deal_state(deck, player, dealer)
                 case States.BLACKJACK:
-                    final_print(States.BLACKJACK)
+                    final_print(States.BLACKJACK, player, dealer)
                     curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.PLAYER:
                     curr_state = BlackJack.player_state(deck, player, dealer)
                 
                 case States.BUST:
-                    final_print(States.BUST)
+                    final_print(States.BUST, player, dealer)
                     curr_state = BlackJack.choose_state(player, dealer)
 
 
@@ -43,11 +43,11 @@ class BlackJack:
                     curr_state = BlackJack.roundover_state(deck, player, dealer)
                     
                 case States.WIN:
-                    final_print(States.WIN)
+                    final_print(States.WIN, player, dealer)
                     curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.LOSE:
-                    final_print(States.LOSE)
+                    final_print(States.LOSE, player, dealer)
                     curr_state = BlackJack.choose_state(player, dealer)
                 
                 case States.TIE:
@@ -153,8 +153,7 @@ class BlackJack:
         return States.PLAYER
     
     def choose_state(player: Player, dealer: Dealer):
-        print(text2asci(f"FINAL SCORE! Dealer: {dealer.get_max_valid_score()} and Player: {player.get_max_valid_score()}", "avatar"))
-        print_board(player, dealer, True)
+        print(text2asci(f"FINAL SCORE! Dealer: {dealer.get_max_valid_score()} and Player: {player.get_max_valid_score()}", "medium"))
         print("Are you tired of winning?")
         print("Type q to quit or press Enter to gamble more")
         action = player.decide_action()
