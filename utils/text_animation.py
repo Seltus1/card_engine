@@ -55,8 +55,8 @@ def stringWave(live:Live, text: str, colors: list[str], swapTime, loops):
 
 
 if __name__ == "__main__":
-    text = "Hi Stimmer"
+    text = "Hi Sawsan"
     with Live(refresh_per_second=60) as live:
         stringColorChange(live, text,["green","white"], .2,2)
-        stringWave(live, text,["green","black"], .2, 2)
-        stringColorChange(live, text,["red","yellow"], .2,2)
+        stringWave(live, text,["green","white"], .2, 2)
+        stringColorChange(live, text,["green","white"], .2,2)
