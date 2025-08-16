@@ -13,6 +13,8 @@ class Dealer(Entity):
         self.update_score(self.hand_score())
         if self.get_hard_score() == 21:
             return
+        if self.get_hard_score() >= 17:
+            return
         while self.hard_score < 17 or (self.soft_score < 17 and self.soft_score != 0):
             self.hand.add_card(deck.deal_card(True))
             self.update_score(self.hand_score())
