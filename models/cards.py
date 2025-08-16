@@ -177,7 +177,7 @@ def print_cards(cards: list[Card]):
                     build_string = padding + build_string
 
                 print(build_string, end="", flush=True)
-                time.sleep(0.005)
+                time.sleep(0.0025)
             
             card_location[card] += 1
         
