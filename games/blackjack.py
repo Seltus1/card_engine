@@ -89,8 +89,6 @@ class BlackJack:
         while not end_turn:
             os.system("clear")
             print_board(player, dealer, False)
-            print("Enter the following:")
-            print("H to hit, D for double down, S for stand")
             print(deck.remaining_cards)
             user_input = player.decide_action()
             match user_input.upper():
@@ -153,9 +151,7 @@ class BlackJack:
         return States.PLAYER
     
     def choose_state(player: Player, dealer: Dealer):
-        print(text2asci(f"FINAL SCORE! Dealer: {dealer.get_max_valid_score()} and Player: {player.get_max_valid_score()}", "medium"))
-        print("Are you tired of winning?")
-        print("Type q to quit or press Enter to gamble more")
+        print_choose_state(player, dealer)
         while True:
             action = player.decide_action()
             match action:

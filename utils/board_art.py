@@ -41,16 +41,28 @@ def print_board(player: Player, dealer: Dealer, end_game: bool):
         print(dealer.hand)
     else:
         print(dealer.get_up_card())
-    print("##########################")
+    print("####################################################")
     tprint("Player's Hand", font="small")
     print(player.hand)
 
-def print_final_board(player: Player, dealer: Dealer):
-    tprint("Dealer's Hand", font="small")
-    print(dealer.get_up_card())
-    print("##########################")
-    tprint("Player's Hand", font="small")
-    print(player.hand)
+
+def print_choose_state(player: Player, dealer: Dealer):
+    print(text2art(f"Dealer: {dealer.get_max_valid_score()}", "small"))
+    print(text2art(f"Player: {player.get_max_valid_score()}", "small"))
+    print()
+    print()
+    print(text2art("Are you tired of winning?", "small"))
+    print()
+    print(text2art("Q: quit", "small"))
+    print(text2art("Enter: gamble more", "small"))
+
+def print_blackjack_instructions():
+    os.system("clear")
+    print(text2art("Blackjack Instructions", "tarty2"))
+    print(text2art("H to hit", "tarty2"))
+    print(text2art("S to stand", "tarty2"))
+    print(text2art("D to double down", "tarty2"))
+    print(text2art("Press F to play", "tarty2"))
 
 def text2asci(text: str, font: str):
     return text2art(text, font)
