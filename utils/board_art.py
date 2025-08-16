@@ -35,6 +35,21 @@ ascii_lose = """
  '----------------'                      '----------------'  '----------------'  '----------------'  '----------------' 
 """
 
+ascii_tie = """
+ .----------------.  .----------------.  .----------------.
+| .--------------. || .--------------. || .--------------. |
+| |  _________   | || |     _____    | || |  _________   | |
+| | |  _   _  |  | || |    |_   _|   | || | |_   ___  |  | |
+| | |_/ | | \_|  | || |      | |     | || |   | |_  \_|  | |
+| |     | |      | || |      | |     | || |   |  _|  _   | |
+| |    _| |_     | || |     _| |_    | || |  _| |___/ |  | |
+| |   |_____|    | || |    |_____|   | || | |_________|  | |
+| |              | || |              | || |              | |
+| '--------------' || '--------------' || '--------------' |
+ '----------------'  '----------------'  '----------------'
+
+"""
+
 def print_board(player: Player, dealer: Dealer, end_game: bool):
     tprint("Dealer's Hand", font="small")
     if end_game:
@@ -57,7 +72,7 @@ def print_choose_state(player: Player, dealer: Dealer):
     print(text2art("Enter: gamble more", "small"))
 
 def print_blackjack_instructions():
-    os.system("clear")
+    clear_screen()
     print(text2art("Blackjack Instructions", "tarty2"))
     print(text2art("H to hit", "tarty2"))
     print(text2art("S to stand", "tarty2"))
@@ -68,14 +83,22 @@ def text2asci(text: str, font: str):
     return text2art(text, font)
 
 def final_print(state: States, player: Player, dealer: Dealer):
-        os.system('clear')
+        clear_screen()
         print_board(player, dealer, True)
         match state:
             case States.LOSE | States.BUST:
                 console.print(Text(ascii_lose, style="red"))
-                console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
+                console.print(Text(text2art(state.value, "xhelvi")))
             case States.WIN | States.BLACKJACK:
                 console.print(Text(ascii_win, style="green"))
-                console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
+                console.print(Text(text2art(state.value, "xhelvi")))
             case States.TIE:
-                console.print(Text(text2art(state.value, "xhelvi"), style="blue"))
+                console.print(Text(ascii_tie, style="blue"))
+                console.print(Text(text2art(state.value, "xhelvi")))
+
+def clear_screen():
+        if os.name == "nt":  # Windows
+            os.system("cls")
+        else:  
+            os.system("clear")
+

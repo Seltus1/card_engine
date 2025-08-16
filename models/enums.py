@@ -69,6 +69,6 @@ class States(Enum):
     WIN = "ONE MORE ROUND CANT HURT" #6
     LOSE = "TRY AGAIN, NERD!" #7
     BUST = "GREEDY OR UNLUCKY..?" #8
-    TIE = "It's always been rigged.." #9
+    TIE = "Always rigged.." #9
     CHOOSE = "CHOOSE"
     GAMEOVER = "GAMEOVER"

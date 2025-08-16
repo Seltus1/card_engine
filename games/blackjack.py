@@ -52,7 +52,7 @@ class BlackJack:
                     curr_state = BlackJack.choose_state(player, dealer)
                 
                 case States.TIE:
-                    print("It's always been rigged..")
+                    final_print(States.TIE, player, dealer)
                     curr_state = BlackJack.choose_state(player, dealer)
                 
                 case States.GAMEOVER:
@@ -160,13 +160,12 @@ class BlackJack:
                 case "":
                     player.reset()
                     dealer.reset()
-                    os.system('clear')
+                    clear_screen()
                     return States.DEAL
                 case _:
                     print("Valid input, nerd!")
-        
 
 
-           
+
 if __name__ == "__main__":
     BlackJack.run_game()
