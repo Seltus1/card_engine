@@ -23,7 +23,7 @@ class Poker_Player(Entity):
     def __init__(self, hand_limits: int = None, bot: bool = True):
         super().__init__(hand_limits)
         self.bot = bot
-        self.chips = 1000
+        self.chips = 250
         self.round_bet = 0
         self.name = self.get_name()
     
