@@ -1,6 +1,8 @@
 from models.cards import Hand
 from models.enums import *
 class Entity:
+
+
     def __init__(self, hand_limit: int = None):
         if hand_limit:
             self.hand_limit = hand_limit
@@ -11,6 +13,8 @@ class Entity:
         self.soft_score = 0
         self.hard_score = 0
     
+
+
     def hand_score(self) -> int:
         total = 0
         if self.hand.hand_size == 0:
@@ -35,6 +39,8 @@ class Entity:
             self.update_score(total)
             return total
     
+
+
     def update_score(self, score):
         
         if isinstance(score, tuple):
@@ -42,6 +48,8 @@ class Entity:
             self.hard_score = score[1]
         else:
             self.hard_score = score
+
+
 
     def get_max_valid_score(self):
         if self.hard_score == 21 or self.soft_score == 21:
@@ -56,11 +64,17 @@ class Entity:
         else:
             return max(self.hard_score, self.soft_score)
 
+
+
     def get_soft_score(self) -> int:
         return self.soft_score
     
+
+
     def get_hard_score(self) -> int:
         return self.hard_score
+    
+
     
     def reset(self):
         self.hand: Hand = Hand.create_hand(self.hand_limit)
