@@ -23,7 +23,7 @@ class BlackJack:
 
             match curr_state:
                 case States.DEAL:
-                    deck.reset()
+                    deck = deck.reset()
                     curr_state = BlackJack.deal_state(deck, player, dealer)
                 case States.BLACKJACK:
                     final_print(States.BLACKJACK, player, dealer)
