@@ -214,13 +214,4 @@ def print_cards(cards: list[Card]):
         print()
 
 if __name__ == "__main__":
-    cards = []
-    for i in range(10):
-        random_suit = random.choice(list(Symbols))
-        random_rank = random.choice(list(Ascii_Rank))
-        random_card = Card(random_suit, random_rank)
-        cards.append(random_card)
-
-        print_cards(cards)
-
     print_cards([Card(Suit.SPADE, Rank.TEN), Card(Suit.DIAMOND, Rank.TEN), Card(Suit.CLUB, Rank.JACK), Card(Suit.SPADE, Rank.QUEEN)])
