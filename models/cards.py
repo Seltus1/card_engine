@@ -4,6 +4,9 @@ import os
 from dataclasses import dataclass, field
 from models.enums import *
 from random import shuffle
+from rich.console import Console
+from rich.text import Text
+
 
 @dataclass(frozen=True)
 class Card:
@@ -13,31 +16,7 @@ class Card:
     def __str__(self):
         print_cards([self])
         return ""
-    
-    def  ascii_card(self):
-        """
-        Prints an ASCII representation of a single playing card.
 
-        Args:
-            rank (str): The rank of the card ('2'-'10', 'J', 'Q', 'K', 'A').
-            suit (str): The suit of the card ('♠', '♥', '♦', '♣').
-        """
-        top = "┌─────────┐"
-        bottom = "└─────────┘"
-        side = "│         │"
-
-        if self.rank == 10:  # Ten is the only rank with two digits
-            rank_right = f"{Ascii_Rank[self.rank].value:2}" 
-            rank_left =  f"{Ascii_Rank[self.rank].value:2}"
-        else:
-            rank_right = f"{Ascii_Rank[self.rank].value:<2}"
-            rank_left =  f"{Ascii_Rank[self.rank].value:>2}"
-
-        suit_line = f"│    {Symbols[self.suit].value}    │"
-        rank_line_left = f"│{rank_left}       │"
-        rank_line_right = f"│       {rank_right}│"
-        lines_of_cards = [top, rank_line_left, side, suit_line, side, rank_line_right, bottom]
-        return lines_of_cards
 
 
 @dataclass
@@ -120,18 +99,15 @@ def get_ranks(card: Card):
 def determineCardColor(suit):
     match suit:
         case "HEART":
-            return "\033[91m"
+            return "red"
         case "DIAMOND":
-            return "\033[38;5;214m"
+            return "orange3"
         case "SPADE":
-            return "\033[92m"
+            return "green"
         case "CLUB":
-            return "\033[94m"
-        
-
+            return "blue"
 
 def print_cards(cards: list[Card]):
-    os.system('color')
     card_builder = {
         "top":             ["┌", "─", "─", "─", "─", "─", "─", "─", "─", "─┐"],
         "bottom":          ["└", "─", "─", "─", "─", "─", "─", "─", "─", "─┘"],
@@ -156,13 +132,14 @@ def print_cards(cards: list[Card]):
     sleepTime = .01
     decay = .0025
     minSleepTime = .004
+
     while len(card_location) > 0:
         cards_to_print = len(card_location)
         for card in card_location:
             if card_location[card] < 0:
                 cards_to_print -= 1
                 continue
-            
+
         for card_index, (card, build_index) in enumerate(card_location.items()):
             if build_index < 0:
                 card_location[card] += 1
@@ -173,7 +150,6 @@ def print_cards(cards: list[Card]):
             can_skip = card_index < cards_to_print - 1
             for index, build_string in enumerate(card_builder[order]):
 
-                # Checking when to stop printing for this card
                 if can_skip and order in skip_7 and index == 7:
                     break
 
@@ -191,14 +167,16 @@ def print_cards(cards: list[Card]):
                 
                 if padding != "" and first_print:
                     build_string = padding + build_string
+
                 cardColor = determineCardColor(card.suit)
-                print(f"{cardColor}{build_string}\x1b[0m", end="", flush=True)
+                console = Console()
+                console.print(Text(build_string, style=cardColor), end="", soft_wrap=True)
                 time.sleep(sleepTime)
                 sleepTime -= decay
-                if(sleepTime < minSleepTime):
+                if sleepTime < minSleepTime:
                     sleepTime = minSleepTime
                 time.sleep(sleepTime)
-            
+
             card_location[card] += 1
         
         delete_cards = None

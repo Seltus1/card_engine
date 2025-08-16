@@ -4,7 +4,7 @@ class Player(Entity):
         super().__init__(hand_limit)
         self.has_natural_blackjack = False
         self.total_moeny: int = 0
-        self.bet: int = 0
+        self.curr_bet: int = 0
 
     def __str__(self):
         return (f"The player has {self.hand.hand_size}")

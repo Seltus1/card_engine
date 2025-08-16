@@ -56,7 +56,7 @@ def print_board(player: Player, dealer: Dealer, end_game: bool):
         print(dealer.hand)
     else:
         print(dealer.get_up_card())
-    print("####################################################")
+    tprint("####################################################", "tarty5")
     tprint("Player's Hand", font="small")
     print(player.hand)
 
@@ -78,6 +78,10 @@ def print_blackjack_instructions():
     print(text2art("S to stand", "tarty2"))
     print(text2art("D to double down", "tarty2"))
     print(text2art("Press F to play", "tarty2"))
+
+def print_bet_state():
+     clear_screen()
+     print(text2art("Want to bet?"))
 
 def text2asci(text: str, font: str):
     return text2art(text, font)
@@ -102,3 +106,5 @@ def clear_screen():
         else:  
             os.system("clear")
 
+# def print_console(s: str, colour: str):
+#     console.print(Text(s, style=colour), end="", soft_wrap=True)

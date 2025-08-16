@@ -9,18 +9,14 @@ king_of_heart = Card("HEART", "KING")
 
 class BlackJack:
 
-
-
     def run_game():
         curr_state = States.DEAL
         deck = Deck.create_deck()
-        
         game_over = False
         player = Player()
         dealer = Dealer()
-        # BlackJack.deal_state(deck, curr_state, player, dealer)
-        while not game_over:
 
+        while not game_over:
             match curr_state:
                 case States.DEAL:
                     deck = deck.reset()
@@ -35,7 +31,6 @@ class BlackJack:
                 case States.BUST:
                     final_print(States.BUST, player, dealer)
                     curr_state = BlackJack.choose_state(player, dealer)
-
 
                 case States.DEALER_PEAK:
                     curr_state = BlackJack.dealer_peak(deck, player, dealer)
@@ -61,7 +56,7 @@ class BlackJack:
 
 
     def deal_state(deck: Deck, player: Player, dealer: Dealer):
-        print(deck.remaining_cards)
+        print(text2asci("hi", "small"))
         player.hand.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
         player.hand.add_card(deck.deal_card(True))
@@ -87,9 +82,9 @@ class BlackJack:
         end_turn = False
 
         while not end_turn:
-            os.system("clear")
+            clear_screen()
             print_board(player, dealer, False)
-            print(deck.remaining_cards)
+            tprint(f"Remaining cards: {deck.remaining_cards}", "small")
             user_input = player.decide_action()
             match user_input.upper():
                 case "H":
@@ -164,6 +159,33 @@ class BlackJack:
                     return States.DEAL
                 case _:
                     print("Valid input, nerd!")
+
+    def bet_state(player: Player):
+        print("Want to bet?")
+        while True:
+            print("Enter Y/N")
+            answer = player.decide_action()
+            match answer:
+                case "y":
+                    print("How much?")
+                    bet = player.decide_action()
+                case "n":
+                    return States.DEAL
+                case _:
+                    print("Invalid input")
+                
+    def bet_state_helper(player: Player, answer: int):
+        while True:
+            try:
+                 bet = int(answer)
+                 if bet > player.total_moeny:
+                     x=5
+                 return bet
+            except:
+                print("Invalid entry, whole numbers only")
+    
+    def handle_player_bets(player: Player, bet: int):
+        x=5
 
 
 
