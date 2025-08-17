@@ -18,4 +18,5 @@ class Player(Entity):
     def reset(self):
         super().reset()
         self.has_natural_blackjack = False
+        self.curr_bet = 0
         

@@ -3,6 +3,7 @@ from models.cards import *
 from entities.dealer import Dealer
 from entities.player import Player
 from utils.board_art import *
+from utils.stats import *
 
 ace_of_spaces = Card("SPADE", "ACE") 
 king_of_heart = Card("HEART", "KING")
@@ -10,19 +11,24 @@ king_of_heart = Card("HEART", "KING")
 class BlackJack:
 
     def run_game():
-        curr_state = States.DEAL
+        curr_state = States.BET
         deck = Deck.create_deck()
         game_over = False
         player = Player()
         dealer = Dealer()
-
+        stat_tracking = Stats()
         while not game_over:
             match curr_state:
+                case States.BET:
+                    curr_state = BlackJack.bet_state(player)
+                    stat_tracking.update_specific_stat("total_bets")
                 case States.DEAL:
                     deck = deck.reset()
                     curr_state = BlackJack.deal_state(deck, player, dealer)
+
                 case States.BLACKJACK:
                     final_print(States.BLACKJACK, player, dealer)
+                    stat_tracking.update_stat(player, curr_state)
                     curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.PLAYER:
@@ -30,24 +36,28 @@ class BlackJack:
                 
                 case States.BUST:
                     final_print(States.BUST, player, dealer)
+                    stat_tracking.update_stat(player, curr_state)
                     curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.DEALER_PEAK:
-                    curr_state = BlackJack.dealer_peak(deck, player, dealer)
+                    curr_state = BlackJack.dealer_peak(deck, player, dealer, stat_tracking)
 
                 case States.ROUNDOVER:
                     curr_state = BlackJack.roundover_state(deck, player, dealer)
                     
                 case States.WIN:
                     final_print(States.WIN, player, dealer)
+                    stat_tracking.update_stat(player, curr_state)
                     curr_state = BlackJack.choose_state(player, dealer)
 
                 case States.LOSE:
                     final_print(States.LOSE, player, dealer)
+                    stat_tracking.update_stat(player, curr_state)
                     curr_state = BlackJack.choose_state(player, dealer)
                 
                 case States.TIE:
                     final_print(States.TIE, player, dealer)
+                    stat_tracking.update_stat(player, curr_state)
                     curr_state = BlackJack.choose_state(player, dealer)
                 
                 case States.GAMEOVER:
@@ -125,13 +135,14 @@ class BlackJack:
 
 
    
-    def dealer_peak(deck: Deck, player: Player, dealer: Dealer) -> str:
+    def dealer_peak(deck: Deck, player: Player, dealer: Dealer, stat_tracker: Stats) -> str:
         dealer.update_score(dealer.hand_score())
         dealer_score = dealer.get_max_valid_score()
         if dealer_score == 21:
             if player.has_natural_blackjack:
                 return States.TIE
             else:
+                stat_tracker.update_specific_stat("blackjacks_against")
                 return States.LOSE
         elif player.has_natural_blackjack:
             return States.BLACKJACK
@@ -149,34 +160,34 @@ class BlackJack:
                     player.reset()
                     dealer.reset()
                     clear_screen()
-                    return States.DEAL
+                    return States.BET
                 case _:
                     print("Valid input, nerd!")
 
     def bet_state(player: Player):
-        print("Want to bet?")
-        while True:
-            print("Enter Y/N")
-            answer = player.decide_action()
-            match answer:
-                case "y":
-                    print("How much?")
-                    bet = player.decide_action()
-                case "n":
-                    return States.DEAL
-                case _:
-                    print("Invalid input")
-                
-    def bet_state_helper(player: Player, answer: int):
+        print("Place your bet")
         while True:
             try:
-                 bet = int(answer)
-                 if bet > player.total_money:
-                     #dummy for now, will call for input later
-                     player.total_money == 1000
-                 return bet
+                bet = int(player.decide_action())
+                if bet > player.total_money:
+                    #dummy for now, will call for input later
+                    player.total_money == 10000
+                player.curr_bet = bet
+                return States.DEAL
             except:
                 print("Invalid entry, whole numbers only")
+                
+    # def bet_state_helper(player: Player, answer: int):
+    #     while True:
+    #         try:
+    #             bet = int(answer)
+    #             if bet > player.total_money:
+    #                 #dummy for now, will call for input later
+    #                 player.total_money == 10000
+    #             player.curr_bet = bet
+    #             return bet
+    #         except:
+    #             print("Invalid entry, whole numbers only")
     
     def handle_player_bets(player: Player, bet: int):
         x=5

@@ -22,7 +22,7 @@ class Stats:
                 if state == States.BLACKJACK:
                     self.data["blackjacks_won"] += 1
                 if player.curr_bet > self.data["biggest_win"]:
-                    self.data["biggest_win"] == player.curr_bet
+                    self.data["biggest_win"] = player.curr_bet
             case States.TIE:
                 self.data["total_ties"] += 1
                 self.data["total_matches"] += 1
@@ -34,13 +34,22 @@ class Stats:
                 if state == States.BUST:
                     self.data["bust_loss"] += 1
                 if player.curr_bet > self.data["biggest_loss"]:
-                    self.data["biggest_loss"] == player.curr_bet
+                    self.data["biggest_loss"] = player.curr_bet
+        self.save_data()
     
     def save_data(self):
+        self.data["net_profit"] = self.data["total_wins"] - self.data["total_losses"]
+        if self.data["win_streak"] > self.data["longest_win_streak"]:
+            self.data["longest_winstreak"] = self.data["win_streak"]
+
+        if self.data["loss_streak"] > self.data["longest_loss_streak"]:
+            self.data["longest_loss_streak"] = self.data["loss_streak"]
+
         with open(self.file_path, "w") as f:
             json.dump(self.data, f, indent=4)
 
-
+    def update_specific_stat(self, stat: str):
+        self.data[stat] += 1
 if __name__ == "__main__":
     x = Stats()
     x.update_stat(States.TIE)

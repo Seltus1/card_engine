@@ -72,3 +72,4 @@ class States(Enum):
     TIE = "Always rigged.." #9
     CHOOSE = "CHOOSE"
     GAMEOVER = "GAMEOVER"
+    BET = "BET"
