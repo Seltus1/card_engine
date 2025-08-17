@@ -165,7 +165,7 @@ class BlackJack:
                     print("Valid input, nerd!")
 
     def bet_state(player: Player):
-        print("Place your bet")
+        print_bet_state()
         while True:
             try:
                 bet = int(player.decide_action())

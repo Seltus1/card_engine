@@ -40,7 +40,7 @@ class Stats:
     def save_data(self):
         self.data["net_profit"] = self.data["total_wins"] - self.data["total_losses"]
         if self.data["win_streak"] > self.data["longest_win_streak"]:
-            self.data["longest_winstreak"] = self.data["win_streak"]
+            self.data["longest_win_streak"] = self.data["win_streak"]
 
         if self.data["loss_streak"] > self.data["longest_loss_streak"]:
             self.data["longest_loss_streak"] = self.data["loss_streak"]

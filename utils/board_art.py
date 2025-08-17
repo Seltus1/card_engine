@@ -81,7 +81,7 @@ def print_blackjack_instructions():
 
 def print_bet_state():
      clear_screen()
-     print(text2art("Want to bet?"))
+     print(text2art("Place your bet!", "tarty2"))
 
 def text2asci(text: str, font: str):
     return text2art(text, font)
