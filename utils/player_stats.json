@@ -12,6 +12,7 @@
     "win_streak": 0,
     "longest_win_streak": 0,
     "loss_streak": 0,
+    "bust_loss": 0,
     "longest_loss_streak": 0,
     "blackjacks_won": 0,
     "blackjacks_against": 0
