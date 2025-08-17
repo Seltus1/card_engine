@@ -3,7 +3,7 @@ from models.cards import *
 from entities.dealer import Dealer
 from entities.player import Player
 from utils.board_art import *
-import os
+
 ace_of_spaces = Card("SPADE", "ACE") 
 king_of_heart = Card("HEART", "KING")
 
@@ -171,8 +171,9 @@ class BlackJack:
         while True:
             try:
                  bet = int(answer)
-                 if bet > player.total_moeny:
-                     x=5
+                 if bet > player.total_money:
+                     #dummy for now, will call for input later
+                     player.total_money == 1000
                  return bet
             except:
                 print("Invalid entry, whole numbers only")

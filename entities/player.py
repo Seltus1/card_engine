@@ -3,7 +3,7 @@ class Player(Entity):
     def __init__(self, hand_limit: int = None):
         super().__init__(hand_limit)
         self.has_natural_blackjack = False
-        self.total_moeny: int = 0
+        self.total_money: int = 0
         self.curr_bet: int = 0
 
     def __str__(self):
@@ -13,7 +13,7 @@ class Player(Entity):
         return input().lower()
     
     def increase_bet(self, bet: int):
-        x=5
+        self.curr_bet += bet
     
     def reset(self):
         super().reset()
