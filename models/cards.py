@@ -1,6 +1,4 @@
 import time
-import random
-import os
 from dataclasses import dataclass, field
 from models.enums import *
 from random import shuffle

@@ -12,6 +12,7 @@ json_template = {
     "money_gained": 0,
     "money_lost": 0,
     "net_profit": 0,
+    "total_money": 100000,
     "biggest_win": 0,
     "biggest_loss": 0,
     "win_streak": 0,
@@ -44,8 +45,10 @@ class Stats:
                 if state == States.BLACKJACK:
                     self.data["blackjacks_won"] += 1
                     self.data["money_gained"] += (player.curr_bet * 1.5)
+                    self.data["total_money"] += player.curr_bet
                 else:
                     self.data["money_gained"] += player.curr_bet
+                    self.data["total_money"] += player.curr_bet
 
                 if player.curr_bet > self.data["biggest_win"]:
                     self.data["biggest_win"] = player.curr_bet
@@ -57,6 +60,7 @@ class Stats:
                 self.data["total_matches"] += 1
                 self.data["loss_streak"] += 1
                 self.data["money_lost"] += player.curr_bet
+                self.data["total_money"] -= player.curr_bet
                 if state == States.BUST:
                     self.data["bust_loss"] += 1
                 if player.curr_bet > self.data["biggest_loss"]:

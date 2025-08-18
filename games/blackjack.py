@@ -112,7 +112,10 @@ class BlackJack:
                     return States.ROUNDOVER
                 
                 case "D":
-                    print("Not yet implemented")
+                    player.hand.add_card(deck.deal_card(True))
+                    player.update_score(player.hand_score())
+                    player.curr_bet *= 2
+                    return States.ROUNDOVER 
                 case _:
                     print("hey")
                     continue
