@@ -9,8 +9,8 @@ class Player(Entity):
     def __str__(self):
         return (f"The player has {self.hand.hand_size}")
     
-    def decide_action(self):
-        return input().lower()
+    def decide_action(self, prompt: str = ""):
+        return input(prompt)
     
     def increase_bet(self, bet: int):
         self.curr_bet += bet

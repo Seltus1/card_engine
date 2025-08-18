@@ -171,7 +171,7 @@ class BlackJack:
         print_bet_state()
         while True:
             try:
-                bet = int(player.decide_action())
+                bet = int(player.decide_action("Input you current bet: $"))
                 if bet > player.total_money:
                     #dummy for now, will call for input later
                     player.total_money == 10000

@@ -85,8 +85,20 @@ def print_bet_state():
      clear_screen()
      print(text2art("Place your bet!", "tarty2"))
      print(text2art("Current stats", "tarty2"))
-     print(text2art(f"W/L: {(stat_manager.get_stat("total_wins") / stat_manager.get_stat("total_losses")): .2f}", "small"))
-     print(text2art(f"Total money gained: {stat_manager.get_stat("net_profit")}", "small"))
+     
+     total_wins = stat_manager.get_stat('total_wins')
+     total_losses = stat_manager.get_stat('total_losses')
+     total_matches = stat_manager.get_stat('total_matches')
+     
+     if total_matches == 0:
+         win_loss_ratio = "0-0-0 (0%)"
+     else:
+         win_percentage = (total_wins / total_matches) * 100
+         total_ties = stat_manager.get_stat('total_ties')
+         win_loss_ratio = f"{total_wins}-{total_losses}-{total_ties} ({win_percentage:.1f}%)"
+     
+     print(text2art(f"W/L/T: {win_loss_ratio}", "slant"))
+     print(text2art(f"Total money gained: ${stat_manager.get_stat('net_profit')}", "slant"))
 
 def text2asci(text: str, font: str):
     return text2art(text, font)
