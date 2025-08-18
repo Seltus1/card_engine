@@ -75,7 +75,6 @@ class PokerGame:
                 
     
 
-
     def play_bet(self, player: Poker_Player) -> None:
         bet = input(f"Please enter r to raise, c to call, or f to fold\n")
 
@@ -104,7 +103,6 @@ class PokerGame:
                     break # We have dealt the cards in a circle
 
                 # Resetting the players betting amount for the next round
-                
                 if not did_small_blind and player_pos == self.small_blind_index:
                     player.round_bet = self.small_blind
                     self.pot += self.small_blind
@@ -168,6 +166,16 @@ class PokerGame:
             self.ranked_hands.append((best_hand, player))
         
         self.ranked_hands.sort(key=lambda x: x[0].value, reverse=True)
+
+        winners = [self.ranked_hands[0]]
+        for hand in self.ranked_hands[1:]:
+            if hand[0].value == self.ranked_hands[0][0].value:
+                winners.append(hand)
+        
+        if len(winners) > 1:
+            self.tie_breaker(winners)
+        
+        return winners[0][1]
     
 
 
@@ -204,6 +212,39 @@ class PokerGame:
         self.seen_players = []
 
         self.ranked_hands = []
+
+        for player in self.players:
+            player.hand.cards = []
+            player.round_bet = 0
+    
+
+
+    def tie_breaker(self, cards: list[tuple[BestHand, Poker_Player]]) -> None:
+        best_hand = cards[0][0]
+        
+        match best_hand:
+            case best_hand.HIGH_CARD:
+                pass
+            case best_hand.ONE_PAIR:
+                pass
+            case best_hand.TWO_PAIR:
+                pass
+            case best_hand.THREE_OF_A_KIND:
+                pass
+            case best_hand.STRAIGHT:
+                pass
+            case best_hand.FLUSH:
+                pass
+            case best_hand.FULL_HOUSE:
+                pass
+            case best_hand.FOUR_OF_A_KIND:
+                pass
+            case best_hand.STRAIGHT_FLUSH:
+                pass
+            case best_hand.ROYAL_FLUSH:
+                pass
+            case _:
+                pass
 
     
     

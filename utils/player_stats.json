@@ -1,0 +1,20 @@
+{
+    "total_matches": 27,
+    "total_bets": 27,
+    "total_wins": 6,
+    "total_losses": 17,
+    "total_ties": 4,
+    "money_gained": 100000000000000000110545,
+    "money_lost": 1000000012536041125,
+    "net_profit": 99998999999987464069420,
+    "total_money": 99998999999987464169420,
+    "biggest_win": 100000000000000000000000,
+    "biggest_loss": 1000000000000000000,
+    "win_streak": 0,
+    "longest_win_streak": 3,
+    "loss_streak": 1,
+    "bust_loss": 10,
+    "longest_loss_streak": 9,
+    "blackjacks_won": 0,
+    "blackjacks_against": 1
+}
