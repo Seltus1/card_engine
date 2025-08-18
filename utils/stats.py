@@ -41,7 +41,7 @@ class Stats:
                 self.data["total_wins"] += 1
                 self.data["win_streak"] += 1
                 self.data["total_matches"] += 1
-                
+                self.data["loss_streak"] = 0
                 if state == States.BLACKJACK:
                     self.data["blackjacks_won"] += 1
                     self.data["money_gained"] += (player.curr_bet * 1.5)
@@ -59,6 +59,7 @@ class Stats:
                 self.data["total_losses"] += 1
                 self.data["total_matches"] += 1
                 self.data["loss_streak"] += 1
+                self.data["win_streak"] = 0
                 self.data["money_lost"] += player.curr_bet
                 self.data["total_money"] -= player.curr_bet
                 if state == States.BUST:
