@@ -177,22 +177,5 @@ class BlackJack:
             except:
                 print("Invalid entry, whole numbers only")
                 
-    # def bet_state_helper(player: Player, answer: int):
-    #     while True:
-    #         try:
-    #             bet = int(answer)
-    #             if bet > player.total_money:
-    #                 #dummy for now, will call for input later
-    #                 player.total_money == 10000
-    #             player.curr_bet = bet
-    #             return bet
-    #         except:
-    #             print("Invalid entry, whole numbers only")
-    
-    def handle_player_bets(player: Player, bet: int):
-        x=5
-
-
-
 if __name__ == "__main__":
     BlackJack.run_game()

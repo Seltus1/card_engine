@@ -4,6 +4,7 @@ from rich.console import Console
 from rich.text import Text
 from entities.dealer import Dealer
 from entities.player import Player
+from utils.stats import Stats
 import os
 
 console = Console()
@@ -80,8 +81,12 @@ def print_blackjack_instructions():
     print(text2art("Press F to play", "tarty2"))
 
 def print_bet_state():
+     stat_manager = Stats()
      clear_screen()
      print(text2art("Place your bet!", "tarty2"))
+     print(text2art("Current stats", "tarty2"))
+     print(text2art(f"W/L: {(stat_manager.get_stat("total_wins") / stat_manager.get_stat("total_losses")): .2f}", "small"))
+     print(text2art(f"Total money gained: {stat_manager.get_stat("net_profit")}", "small"))
 
 def text2asci(text: str, font: str):
     return text2art(text, font)
@@ -106,5 +111,3 @@ def clear_screen():
         else:  
             os.system("clear")
 
-# def print_console(s: str, colour: str):
-#     console.print(Text(s, style=colour), end="", soft_wrap=True)
