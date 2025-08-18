@@ -4,7 +4,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models.cards import Card
-from models.enums import Hands, Rank, Suit, Poker_Value
+from entities.player import Poker_Player
+from models.enums import Suit, Rank, Hands, Poker_Value
 
 
 
@@ -20,11 +21,6 @@ class BestHand:
         self.high_card_count = 0
         self.contains_straight = False
         self.high_cards = []
-
-
-    def find_card(self, rank: Rank, suit: Suit, cards: list[Card]) -> Card | None:
-        for card in cards:
-            pass
 
 
 
@@ -97,7 +93,6 @@ class BestHand:
 
 
 
-
     def is_royal_flush(self) -> bool:
         if self.total_high_cards() != 5:
             return False
@@ -111,7 +106,6 @@ class BestHand:
         
         return True
     
-
 
 
     def is_straight_flush(self) -> bool:
@@ -144,6 +138,7 @@ class BestHand:
     def is_two_pair(self) -> bool:
         return sum(1 for count in self.counts.values() if count == 2) == 2
     
+
 
     def is_pair(self) -> bool:
         return 2 in self.counts.values()
@@ -182,79 +177,52 @@ class BestHand:
 
 
 
+class TieBreaker:
+
+    def __init__(self, ranks: list[tuple[BestHand, Poker_Player]]):
+        self.ranks = ranks
+        self.hands = self._fill_hands()
+    
+
+
+    def _fill_hands(self) -> None:
+        for rank in self.ranks:
+            key = rank[1].name
+            hand = rank[1].hand
+    
+
+
+    def high_card(self) -> Poker_Player:
+        highest_card = 0
+        tie_breaker_player = None
+
+        for player in self.ranks:
+            player_hand = player[0].hand
+            value = max(Poker_Value[card.rank].value for card in player_hand.cards)
+            
+            if value > highest_card:
+                highest_card = value
+                tie_breaker_player = player[1]
+        
+        return tie_breaker_player
+
+
+
+    def one_pair(self) -> Poker_Player:
+        pass
+
+
 
 
 if __name__ == "__main__":
-    def test_hand_type(name: str, hand: list[Card], river: list[Card], expected_hand_type: Hands) -> bool:
-        """Test a specific hand type and return whether it matches the expected result."""
-        best_hand = BestHand(hand, river)
-        result = best_hand.get_best_hand()
-        success = result == expected_hand_type
-        print(f"{name}: {'PASS' if success else 'FAIL'} (Expected: {expected_hand_type}, Got: {result})")
-        return success
-    
-    print("Testing all 10 poker hand types:")
-    print("=" * 50)
-    
-    # Test cases for all 10 hand types
-    test_results = []
-    
-    # 1. Royal Flush (A, K, Q, J, 10 all same suit)
-    hand1 = [Card(Suit.SPADE, Rank.ACE), Card(Suit.SPADE, Rank.KING)]
-    river1 = [Card(Suit.SPADE, Rank.QUEEN), Card(Suit.SPADE, Rank.JACK), Card(Suit.SPADE, Rank.TEN), Card(Suit.HEART, Rank.TWO), Card(Suit.CLUB, Rank.THREE)]
-    test_results.append(test_hand_type("Royal Flush", hand1, river1, Hands.ROYAL_FLUSH))
-    
-    # 2. Straight Flush (5 consecutive cards, same suit)
-    hand2 = [Card(Suit.HEART, Rank.FIVE), Card(Suit.HEART, Rank.SIX)]
-    river2 = [Card(Suit.HEART, Rank.SEVEN), Card(Suit.HEART, Rank.EIGHT), Card(Suit.HEART, Rank.NINE), Card(Suit.CLUB, Rank.TWO), Card(Suit.SPADE, Rank.THREE)]
-    test_results.append(test_hand_type("Straight Flush", hand2, river2, Hands.STRAIGHT_FLUSH))
-    
-    # 3. Four of a Kind (4 cards of same rank)
-    hand3 = [Card(Suit.SPADE, Rank.KING), Card(Suit.HEART, Rank.KING)]
-    river3 = [Card(Suit.CLUB, Rank.KING), Card(Suit.DIAMOND, Rank.KING), Card(Suit.SPADE, Rank.ACE), Card(Suit.HEART, Rank.TWO), Card(Suit.CLUB, Rank.THREE)]
-    test_results.append(test_hand_type("Four of a Kind", hand3, river3, Hands.FOUR_OF_A_KIND))
-    
-    # 4. Full House (3 of one rank + 2 of another rank)
-    hand4 = [Card(Suit.SPADE, Rank.QUEEN), Card(Suit.HEART, Rank.QUEEN)]
-    river4 = [Card(Suit.CLUB, Rank.QUEEN), Card(Suit.DIAMOND, Rank.JACK), Card(Suit.SPADE, Rank.JACK), Card(Suit.HEART, Rank.TWO), Card(Suit.CLUB, Rank.THREE)]
-    test_results.append(test_hand_type("Full House", hand4, river4, Hands.FULL_HOUSE))
-    
-    # 5. Flush (5 cards same suit, not consecutive)
-    hand5 = [Card(Suit.DIAMOND, Rank.TWO), Card(Suit.DIAMOND, Rank.FIVE)]
-    river5 = [Card(Suit.DIAMOND, Rank.SEVEN), Card(Suit.DIAMOND, Rank.JACK), Card(Suit.DIAMOND, Rank.KING), Card(Suit.HEART, Rank.ACE), Card(Suit.CLUB, Rank.THREE)]
-    test_results.append(test_hand_type("Flush", hand5, river5, Hands.FLUSH))
-    
-    # 6. Straight (5 consecutive cards, different suits)
-    hand6 = [Card(Suit.SPADE, Rank.FOUR), Card(Suit.HEART, Rank.FIVE)]
-    river6 = [Card(Suit.CLUB, Rank.SIX), Card(Suit.DIAMOND, Rank.SEVEN), Card(Suit.SPADE, Rank.EIGHT), Card(Suit.HEART, Rank.JACK), Card(Suit.CLUB, Rank.KING)]
-    test_results.append(test_hand_type("Straight", hand6, river6, Hands.STRAIGHT))
-    
-    # 7. Three of a Kind (3 cards of same rank)
-    hand7 = [Card(Suit.SPADE, Rank.TEN), Card(Suit.HEART, Rank.TEN)]
-    river7 = [Card(Suit.CLUB, Rank.TEN), Card(Suit.DIAMOND, Rank.ACE), Card(Suit.SPADE, Rank.KING), Card(Suit.HEART, Rank.TWO), Card(Suit.CLUB, Rank.FOUR)]
-    test_results.append(test_hand_type("Three of a Kind", hand7, river7, Hands.THREE_OF_A_KIND))
-    
-    # 8. Two Pair (2 cards of one rank + 2 cards of another rank)
-    hand8 = [Card(Suit.SPADE, Rank.NINE), Card(Suit.HEART, Rank.NINE)]
-    river8 = [Card(Suit.CLUB, Rank.SEVEN), Card(Suit.DIAMOND, Rank.SEVEN), Card(Suit.SPADE, Rank.ACE), Card(Suit.HEART, Rank.TWO), Card(Suit.CLUB, Rank.FOUR)]
-    test_results.append(test_hand_type("Two Pair", hand8, river8, Hands.TWO_PAIR))
-    
-    # 9. One Pair (2 cards of same rank)
-    hand9 = [Card(Suit.SPADE, Rank.EIGHT), Card(Suit.HEART, Rank.EIGHT)]
-    river9 = [Card(Suit.CLUB, Rank.THREE), Card(Suit.DIAMOND, Rank.FIVE), Card(Suit.SPADE, Rank.SEVEN), Card(Suit.HEART, Rank.JACK), Card(Suit.CLUB, Rank.KING)]
-    test_results.append(test_hand_type("One Pair", hand9, river9, Hands.ONE_PAIR))
-    
-    # 10. High Card (no other combination)
-    hand10 = [Card(Suit.SPADE, Rank.TWO), Card(Suit.HEART, Rank.FOUR)]
-    river10 = [Card(Suit.CLUB, Rank.SIX), Card(Suit.DIAMOND, Rank.EIGHT), Card(Suit.SPADE, Rank.TEN), Card(Suit.HEART, Rank.QUEEN), Card(Suit.CLUB, Rank.ACE)]
-    test_results.append(test_hand_type("High Card", hand10, river10, Hands.HIGH_CARD))
-    
-    print("=" * 50)
-    passed_tests = sum(test_results)
-    total_tests = len(test_results)
-    print(f"Test Results: {passed_tests}/{total_tests} tests passed")
-    
-    if passed_tests == total_tests:
-        print("🎉 All tests passed! The poker hand detection is working correctly.")
-    else:
-        print("❌ Some tests failed. Please check the implementation.")
+    player1 = Poker_Player("Player 1")
+    player2 = Poker_Player("Player 2")
+    player3 = Poker_Player("Player 3")
+
+    player1.hand = [Card(Rank.ACE, Suit.HEART), Card(Rank.KING, Suit.HEART)]
+    player2.hand = [Card(Rank.ACE, Suit.DIAMOND), Card(Rank.QUEEN, Suit.DIAMOND)]
+    player3.hand = [Card(Rank.ACE, Suit.SPADE), Card(Rank.TWO, Suit.SPADE)]
+
+    ranks = [(Hands.HIGH_CARD, player1), (Hands.HIGH_CARD, player2), (Hands.HIGH_CARD, player3)]
+    tie_breaker = TieBreaker(ranks)
+    print(tie_breaker.high_card())
