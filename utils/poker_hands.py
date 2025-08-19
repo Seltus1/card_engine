@@ -145,6 +145,10 @@ class BestHand:
         return 2 in self.counts.values()
 
 
+    def best_hand_includes_hole_cards(self) -> bool:
+        pass
+
+
 
     def get_best_hand(self) -> int:
         if self.is_royal_flush():
@@ -191,8 +195,8 @@ class TieBreaker:
         players = {}
         for rank in self.ranks:
             key = rank[1].name
-            hand = rank[1].hand
-            ordered_hand = sorted(hand, key=lambda x: Poker_Value[x.rank.name].value, reverse=True)
+            hand = rank[1].hand.cards
+            ordered_hand = sorted(hand, key=lambda x: Poker_Value[x.rank].value, reverse=True)
             
             players[key] = rank[1]
             hands[key] = ordered_hand
@@ -208,10 +212,11 @@ class TieBreaker:
             max_card = 0
             player_name = None
             for player, cards in self.hands.items():
-                value = Poker_Value[cards[index].rank.name].value
+                value = Poker_Value[cards[index].rank].value
                 if value > max_card:
                     max_card = value
                     player_name = player
+                    count = 0
                 elif value == max_card:
                     count += 1
             
