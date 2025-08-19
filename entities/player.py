@@ -18,6 +18,36 @@ class Player(Entity):
 
 
 
+POKER_NAMES = [
+    "All-In Annie",
+    "Bluffing Bob",
+    "Card Shark Charlie",
+    "Diamond Dave",
+    "Easy Money Eddie",
+    "Folding Fred",
+    "Going Broke Gary",
+    "High Roller Harry",
+    "Impatient Irene",
+    "Jackpot Jimmy",
+    "King Kong Kenny",
+    "Lucky Lucy",
+    "Money Bags Mike",
+    "No Luck Nick",
+    "One-Eyed Pete",
+    "Poker Face Paul",
+    "Queen Bee Quinn",
+    "River Rat Randy",
+    "Straight Face Steve",
+    "Texas Hold'em Tom",
+    "Unlucky Ursula",
+    "Vegas Vic",
+    "Wild Card Willy",
+    "X-Factor Xavier",
+    "Yolo Yolanda"
+]
+
+
+
 class Poker_Player(Entity):
 
     def __init__(self, hand_limits: int = None, bot: bool = True):
@@ -30,33 +60,8 @@ class Poker_Player(Entity):
 
 
     def get_name(self) -> str:
-        funny_names = [
-            "All-In Annie",
-            "Bluffing Bob",
-            "Card Shark Charlie",
-            "Diamond Dave",
-            "Easy Money Eddie",
-            "Folding Fred",
-            "Going Broke Gary",
-            "High Roller Harry",
-            "Impatient Irene",
-            "Jackpot Jimmy",
-            "King Kong Kenny",
-            "Lucky Lucy",
-            "Money Bags Mike",
-            "No Luck Nick",
-            "One-Eyed Pete",
-            "Poker Face Paul",
-            "Queen Bee Quinn",
-            "River Rat Randy",
-            "Straight Face Steve",
-            "Texas Hold'em Tom",
-            "Unlucky Ursula",
-            "Vegas Vic",
-            "Wild Card Willy",
-            "X-Factor Xavier",
-            "Yolo Yolanda"
-        ]
         if self.bot:
-            return random.choice(funny_names)
+            name = random.choice(POKER_NAMES)
+            POKER_NAMES.remove(name)
+            return name
         return "YOU THE PERSON"

@@ -1,5 +1,6 @@
 import os
 import sys
+import random
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -181,30 +182,44 @@ class TieBreaker:
 
     def __init__(self, ranks: list[tuple[BestHand, Poker_Player]]):
         self.ranks = ranks
-        self.hands = self._fill_hands()
+        self.hands, self.players = self._fill_hands()
     
 
 
     def _fill_hands(self) -> None:
+        hands = {}
+        players = {}
         for rank in self.ranks:
             key = rank[1].name
             hand = rank[1].hand
+            ordered_hand = sorted(hand, key=lambda x: Poker_Value[x.rank.name].value, reverse=True)
+            
+            players[key] = rank[1]
+            hands[key] = ordered_hand
+        
+        return hands, players
     
 
 
     def high_card(self) -> Poker_Player:
-        highest_card = 0
-        tie_breaker_player = None
-
-        for player in self.ranks:
-            player_hand = player[0].hand
-            value = max(Poker_Value[card.rank].value for card in player_hand.cards)
+        index = 0
+        while index < 2:
+            count = 0
+            max_card = 0
+            player_name = None
+            for player, cards in self.hands.items():
+                value = Poker_Value[cards[index].rank.name].value
+                if value > max_card:
+                    max_card = value
+                    player_name = player
+                elif value == max_card:
+                    count += 1
             
-            if value > highest_card:
-                highest_card = value
-                tie_breaker_player = player[1]
+            if count == 0:
+                break
+            index += 1
         
-        return tie_breaker_player
+        return self.players[player_name]
 
 
 
@@ -219,10 +234,12 @@ if __name__ == "__main__":
     player2 = Poker_Player("Player 2")
     player3 = Poker_Player("Player 3")
 
-    player1.hand = [Card(Rank.ACE, Suit.HEART), Card(Rank.KING, Suit.HEART)]
-    player2.hand = [Card(Rank.ACE, Suit.DIAMOND), Card(Rank.QUEEN, Suit.DIAMOND)]
-    player3.hand = [Card(Rank.ACE, Suit.SPADE), Card(Rank.TWO, Suit.SPADE)]
+    player1.hand = [Card(Suit.HEART, Rank.ACE), Card(Suit.HEART, Rank.KING)]
+    player2.hand = [Card(Suit.HEART, Rank.ACE), Card(Suit.HEART, Rank.QUEEN)]
+    player3.hand = [Card(Suit.SPADE, Rank.ACE), Card(Suit.SPADE, Rank.TWO)]
+    
 
     ranks = [(Hands.HIGH_CARD, player1), (Hands.HIGH_CARD, player2), (Hands.HIGH_CARD, player3)]
+    random.shuffle(ranks)
     tie_breaker = TieBreaker(ranks)
-    print(tie_breaker.high_card())
+    print(tie_breaker.high_card().name)
