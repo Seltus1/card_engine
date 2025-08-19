@@ -1,10 +1,10 @@
 import time
 import random
 
-from utils.poker_hands import BestHand
 from entities.player import Poker_Player
 from models.enums import Poker_Game_State
-from models.cards import Deck, Card, print_cards
+from models.cards import Deck, print_cards
+from utils.poker_hands import BestHand, TieBreaker
 
 class PokerGame:
 
@@ -173,7 +173,8 @@ class PokerGame:
                 winners.append(hand)
         
         if len(winners) > 1:
-            self.tie_breaker(winners)
+            winner = self.tie_breaker(winners)
+            winner[0][1] = winner
         
         return winners[0][1]
     
@@ -219,32 +220,10 @@ class PokerGame:
     
 
 
-    def tie_breaker(self, cards: list[tuple[BestHand, Poker_Player]]) -> None:
-        best_hand = cards[0][0]
-        
-        match best_hand:
-            case best_hand.HIGH_CARD:
-                pass
-            case best_hand.ONE_PAIR:
-                pass
-            case best_hand.TWO_PAIR:
-                pass
-            case best_hand.THREE_OF_A_KIND:
-                pass
-            case best_hand.STRAIGHT:
-                pass
-            case best_hand.FLUSH:
-                pass
-            case best_hand.FULL_HOUSE:
-                pass
-            case best_hand.FOUR_OF_A_KIND:
-                pass
-            case best_hand.STRAIGHT_FLUSH:
-                pass
-            case best_hand.ROYAL_FLUSH:
-                pass
-            case _:
-                pass
+    def tie_breaker(self, cards: list[tuple[BestHand, Poker_Player]]) -> Poker_Player:
+        tie = TieBreaker(cards)
+        winner = tie.high_card()
+        return winner
 
     
     
