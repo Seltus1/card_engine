@@ -29,7 +29,7 @@ class BlackJack:
                 case States.BLACKJACK:
                     final_print(States.BLACKJACK, player, dealer)
                     stat_tracking.update_stat(player, curr_state)
-                    curr_state = BlackJack.choose_state(player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer, States.BLACKJACK)
 
                 case States.PLAYER:
                     curr_state = BlackJack.player_state(deck, player, dealer)
@@ -37,7 +37,7 @@ class BlackJack:
                 case States.BUST:
                     final_print(States.BUST, player, dealer)
                     stat_tracking.update_stat(player, curr_state)
-                    curr_state = BlackJack.choose_state(player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer, States.BUST)
 
                 case States.DEALER_PEAK:
                     curr_state = BlackJack.dealer_peak(deck, player, dealer, stat_tracking)
@@ -48,17 +48,17 @@ class BlackJack:
                 case States.WIN:
                     final_print(States.WIN, player, dealer)
                     stat_tracking.update_stat(player, curr_state)
-                    curr_state = BlackJack.choose_state(player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer, States.WIN)
 
                 case States.LOSE:
                     final_print(States.LOSE, player, dealer)
                     stat_tracking.update_stat(player, curr_state)
-                    curr_state = BlackJack.choose_state(player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer, States.LOSE)
                 
                 case States.TIE:
                     final_print(States.TIE, player, dealer)
                     stat_tracking.update_stat(player, curr_state)
-                    curr_state = BlackJack.choose_state(player, dealer)
+                    curr_state = BlackJack.choose_state(player, dealer, States.TIE)
                 
                 case States.GAMEOVER:
                     game_over = True
@@ -152,8 +152,8 @@ class BlackJack:
             
         return States.PLAYER
     
-    def choose_state(player: Player, dealer: Dealer):
-        print_choose_state(player, dealer)
+    def choose_state(player: Player, dealer: Dealer, state: States):
+        print_choose_state(player, dealer, state)
         while True:
             action = player.decide_action()
             match action:

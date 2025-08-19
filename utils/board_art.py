@@ -57,14 +57,19 @@ def print_board(player: Player, dealer: Dealer, end_game: bool):
         print(dealer.hand)
     else:
         print(dealer.get_up_card())
-    tprint("####################################################", "tarty5")
     tprint("Player's Hand", font="small")
     print(player.hand)
 
 
-def print_choose_state(player: Player, dealer: Dealer):
+def print_choose_state(player: Player, dealer: Dealer, state: States):
     print(text2art(f"Dealer: {dealer.get_max_valid_score()}", "small"))
-    print(text2art(f"Player: {player.get_max_valid_score()}", "small"))
+    match state:
+        case States.WIN | States.BLACKJACK:
+            print(text2art(f"Player: {player.get_max_valid_score()}       Money Gained:     ${player.curr_bet}", "small"))
+        case States.LOSE | States.BUST:
+            print(text2art(f"Player: {player.get_max_valid_score()}       Money Lost:       -${player.curr_bet}", "small"))
+        case States.TIE:
+            print(text2art(f"Player: {player.get_max_valid_score()}", "small"))
     print()
     print()
     print(text2art("Are you tired of winning?", "small"))
