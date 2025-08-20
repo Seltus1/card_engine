@@ -66,15 +66,14 @@ class BlackJack:
 
 
     def deal_state(deck: Deck, player: Player, dealer: Dealer):
-        player.hand.add_card(deck.deal_card(True))
+        player.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
-        player.hand.add_card(deck.deal_card(True))
+        player.add_card(deck.deal_card(True))
         dealer.hand.add_card(deck.deal_card(True))
         natural_ranks = ("QUEEN", "JACK", "KING", "TEN", "ACE")
         up_card = dealer.get_up_card()
         player.update_score(player.hand_score())
         if player.soft_score == 21 or player.hard_score == 21:
-            print(player.hand)
             player.has_natural_blackjack = True
             return States.DEALER_PEAK
         
@@ -87,6 +86,8 @@ class BlackJack:
     
     #player can hit, stand, double down(later), 
     def player_state(deck: Deck, player: Player, dealer: Dealer):
+        if player.check_for_split():
+
         end_turn = False
 
         while not end_turn:
@@ -96,7 +97,7 @@ class BlackJack:
             user_input = player.decide_action()
             match user_input.upper():
                 case "H":
-                    player.hand.add_card(deck.deal_card(True))
+                    player.add_card(deck.deal_card(True))
                     player.update_score(player.hand_score())
 
                     if player.hard_score == 21 or player.soft_score == 21:
@@ -120,7 +121,13 @@ class BlackJack:
                     print("hey")
                     continue
 
-
+    def split_choice(player: Player):
+        print("Would you like to split the hand?")
+        while True:
+            answer = player.decide_action("Would you like to split?")
+            match answer:
+                case "y":
+                    player.make_split_hand()
                     
     def roundover_state(deck: Deck, player: Player, dealer: Dealer):
         dealer.hard17(deck)
