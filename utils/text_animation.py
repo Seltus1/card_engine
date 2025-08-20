@@ -4,25 +4,24 @@ from rich import print
 import os
 import time
 from rich.text import Text
+import asyncio
 
 currFont = "tarty1"
 
-def stringColorChange(live: Live, text: str, colors: list[str], swapTime, totalTime):
+async def stringColorChange(text: str, colors: list[str], swapTime, totalTime, staticText: str):
     styled = text2art(text,font=currFont)
     startTime = time.time()
-    lastFlashTime = 0
     colorIndex = 0
-    while(True):
-        currTime = time.time()
-        if currTime - startTime > totalTime: break
-        if (currTime - lastFlashTime) > swapTime:
-            colorIndex+=1
-            colorIndex %= len(colors)
-            lastFlashTime = time.time()
-            live.update(f"[{colors[colorIndex]}]{styled}[/{colors[colorIndex]}]", refresh=True)
+    while(time.time() - startTime < totalTime):
+        colorIndex+=1
+        colorIndex %= len(colors)
+        animated = f"[{colors[colorIndex]}]{styled}[/{colors[colorIndex]}]"
+        finalOut = animated + f"\n{staticText}"
+        yield finalOut
+        await asyncio.sleep(swapTime)        
 
             
-def stringWave(live:Live, text: str, colors: list[str], swapTime, loops:int):
+async def stringWave(text: str, colors: list[str], swapTime, loops:int):
     styledChars = [text2art(letter, font=currFont).splitlines() for letter in text]
     fullString = ""
     flashingIndex = -1
@@ -42,7 +41,7 @@ def stringWave(live:Live, text: str, colors: list[str], swapTime, loops:int):
                 line += f"[{colors[0]}]{char_lines[i]}[/{colors[0]}]"
             fullStringLines.append(line)
         fullString = "\n".join(fullStringLines)
-        live.update(fullString, refresh=True)
+        yield fullString
         flashingIndex += incrementer
         lastFlashTime = time.time()
         if flashingIndex >= len(styledChars) or flashingIndex < 0:
@@ -53,7 +52,7 @@ def stringWave(live:Live, text: str, colors: list[str], swapTime, loops:int):
                 break
 
 
-def charFlash(live: Live,text: str, colors: list[str], swapTime, totalTime: float):
+async def charFlash(text: str, colors: list[str], swapTime, totalTime: float):
     styledChars = [text2art(letter, font=currFont).splitlines() for letter in text]
     startTime = time.time()
     fullString = ""
@@ -75,7 +74,7 @@ def charFlash(live: Live,text: str, colors: list[str], swapTime, totalTime: floa
                 incrementer %= len(colors)
             fullStringLines.append(line)
         fullString = "\n".join(fullStringLines)
-        live.update(fullString, refresh=True)
+        yield fullString
         flashingIndex += incrementer
         lastFlashTime = time.time()
 
@@ -83,14 +82,26 @@ def charFlash(live: Live,text: str, colors: list[str], swapTime, totalTime: floa
                 
 
 
-
-
-
-if __name__ == "__main__":
+async def main():
     text = "GlizzyyMaxxxx"
+
     with Live(auto_refresh=False) as live:
+        animation1 = stringColorChange(text, ["yellow", "red"], .2, 2, "printing after but while async")
+        animation2 = stringColorChange(text, ["green", "red"], .2, 2, "this is the 2nd print statement")
+        while True:
+            try:
+                frame1, frame2 = await asyncio.gather(
+                    anext(animation1),
+                    anext(animation2)
+                )
+                combinedFrames = f"{frame1}\n{frame2}"
+                live.update(combinedFrames, refresh=True)
         # charFlash(live, text,["green", "white", "white", "white", "white", "white"],.05,10)
-        stringWave(live,text,["black","red"], .2,1)
-        stringColorChange(live, text,["yellow","red"], .2,2)
-        charFlash(live, text,["red", "orange", "yellow", "green", "blue", "purple"],.05,200)
-        stringColorChange(live, text,["yellow","red"], .2,2)
+        # await stringWave(live,text,["black","red"], .2,1)
+        # await stringColorChange(live, text,["yellow","red"], .2,2)
+        # await charFlash(live, text,["red", "orange", "yellow", "green", "blue", "purple"],.05,200)
+            except StopAsyncIteration:
+                print("animations complete")
+                break                
+if __name__ == "__main__":
+    asyncio.run(main())
