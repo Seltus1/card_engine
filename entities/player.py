@@ -55,6 +55,7 @@ class Poker_Player(Entity):
         self.bot = bot
         self.chips = 250
         self.round_bet = 0
+        self.best_hand = None
         self.name = self.get_name()
     
 

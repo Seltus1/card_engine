@@ -163,6 +163,7 @@ class PokerGame:
             print_cards(cards)
             hand = BestHand(cards, self.river)
             best_hand = hand.get_best_hand()
+            player.best_hand = hand.best_hand
             self.ranked_hands.append((best_hand, player))
         
         self.ranked_hands.sort(key=lambda x: x[0].value, reverse=True)
@@ -174,7 +175,7 @@ class PokerGame:
         
         if len(winners) > 1:
             winner = self.tie_breaker(winners)
-            winner[0][1] = winner
+            winners[0][1] = winner
         
         return winners[0][1]
     
@@ -266,12 +267,3 @@ if __name__ == "__main__":
     game = PokerGame(player)
     game.play_poker()
 
-
-
-
-
-
-
-
-# TODO:
-# If someone goes all in and one other person accepts, then the cards of both players are shown.

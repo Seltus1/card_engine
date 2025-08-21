@@ -83,8 +83,8 @@ class Hand:
     
     @property
     def can_add_hand(self) -> bool:
-
         return self.hand_size < self.hand_limit
+    
     #Always remember to change any function sigs when you change the way things aer organized or sorted
     def create_hand(hand_limit: int = None) -> 'Hand':
         if hand_limit:
