@@ -25,6 +25,11 @@ class BestHand:
 
 
 
+    def _is_card_in_best_hand(self, rank: str) -> bool:
+        return rank in [card.rank for card in self.hand]
+
+
+
     def is_high_card(self, card: Card) -> bool:
         value = Poker_Value[card.rank].value
         return value >= 10
@@ -137,16 +142,24 @@ class BestHand:
 
 
     def is_two_pair(self) -> bool:
+        if sum(1 for count in self.counts.values() if count == 2) != 2:
+            return False
+        
+
         return sum(1 for count in self.counts.values() if count == 2) == 2
     
 
 
     def is_pair(self) -> bool:
-        return 2 in self.counts.values()
-
-
-    def best_hand_includes_hole_cards(self) -> bool:
-        pass
+        if 2 not in self.counts.values():
+            return False
+        
+        rank_check = None
+        for rank, count in self.counts.items():
+            if count == 2:
+                rank_check = rank
+        
+        return self._is_card_in_best_hand(rank_check)
 
 
 
@@ -225,12 +238,6 @@ class TieBreaker:
             index += 1
         
         return self.players[player_name]
-
-
-
-    def one_pair(self) -> Poker_Player:
-        pass
-
 
 
 
