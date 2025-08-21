@@ -2,13 +2,14 @@ from art import text2art
 from rich.live import Live
 from rich import print
 import os
+import re
 import time
 from rich.text import Text
 import asyncio
 
-currFont = "tarty1"
+currFont = "random"
 
-async def stringColorChange(text: str, colors: list[str], swapTime, totalTime, staticText: str):
+async def stringColorChange(text: str, colors: list[str], swapTime, totalTime):
     styled = text2art(text,font=currFont)
     startTime = time.time()
     colorIndex = 0
@@ -16,8 +17,7 @@ async def stringColorChange(text: str, colors: list[str], swapTime, totalTime, s
         colorIndex+=1
         colorIndex %= len(colors)
         animated = f"[{colors[colorIndex]}]{styled}[/{colors[colorIndex]}]"
-        finalOut = animated + f"\n{staticText}"
-        yield finalOut
+        yield animated
         await asyncio.sleep(swapTime)        
 
             
@@ -83,23 +83,23 @@ async def charFlash(text: str, colors: list[str], swapTime, totalTime: float):
 
 
 async def main():
-    text = "GlizzyyMaxxxx"
+    text = "Winner"
+    text2 = "Now This Is Epic"
 
     with Live(auto_refresh=False) as live:
-        animation1 = stringColorChange(text, ["yellow", "red"], .2, 2, "printing after but while async")
-        animation2 = stringColorChange(text, ["green", "red"], .2, 2, "this is the 2nd print statement")
+        animations = [
+            stringColorChange(text, ["black", "white", "red"], .2, 2),
+            stringColorChange(text, ["black", "white", "red"], .2, 2),
+        ]
+        frames = []
         while True:
             try:
-                frame1, frame2 = await asyncio.gather(
-                    anext(animation1),
-                    anext(animation2)
-                )
-                combinedFrames = f"{frame1}\n{frame2}"
+                frames = []
+                for animation in animations:
+                    frame = await anext(animation)
+                    frames.append(frame)
+                combinedFrames = "\n".join(frames)
                 live.update(combinedFrames, refresh=True)
-        # charFlash(live, text,["green", "white", "white", "white", "white", "white"],.05,10)
-        # await stringWave(live,text,["black","red"], .2,1)
-        # await stringColorChange(live, text,["yellow","red"], .2,2)
-        # await charFlash(live, text,["red", "orange", "yellow", "green", "blue", "purple"],.05,200)
             except StopAsyncIteration:
                 print("animations complete")
                 break                
