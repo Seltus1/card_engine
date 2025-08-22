@@ -40,7 +40,7 @@ class PokerGame:
 
 
     def call_bet(self, player: Poker_Player) -> None:
-        if player.chips < self.call_amount:
+        if player.money < self.call_amount:
             raise ValueError("Player does not have enough chips to call")
         if player.bot:
             time.sleep(0.5)
@@ -49,19 +49,19 @@ class PokerGame:
         bet_amount = self.call_amount - player.round_bet
         print(f"{player.name} called ${bet_amount}")
         self.pot += bet_amount
-        player.chips -= bet_amount
+        player.money -= bet_amount
         player.round_bet += bet_amount
     
 
 
     def raise_bet(self, player: Poker_Player) -> None:
-        print(f"You currently have ${player.chips} dollars\n")
+        print(f"You currently have ${player.money} dollars\n")
         raise_amount = int(input(f"Please enter the amount you want to raise: $"))
         if raise_amount < self.call_amount:
             raise ValueError("Raise amount must be greater than the call amount")
         
         self.pot += raise_amount
-        player.chips -= raise_amount
+        player.money -= raise_amount
 
         self.call_amount = raise_amount
         self.did_raise = True
