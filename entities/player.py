@@ -7,7 +7,8 @@ class Player(Entity):
         self.total_money: int = 0
         self.curr_bet: int = 0
         self.seen_cards: list[Card] = []
-        self.split_hand: Hand 
+        self.split_hand: Hand
+        self.split_choice = False 
 
     def __str__(self):
         return (f"The player has {self.hand.hand_size}")
@@ -22,9 +23,6 @@ class Player(Entity):
     def add_card(self, card: Card):
         self.hand.add_card(card)
         self.seen_cards.append(card)
-        rank_being_checked = card.rank
-        if len(self.seen_cards) < 2:
-            return
         
 
     def check_for_split(self):

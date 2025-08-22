@@ -86,8 +86,9 @@ class BlackJack:
     
     #player can hit, stand, double down(later), 
     def player_state(deck: Deck, player: Player, dealer: Dealer):
-        if player.check_for_split():
-
+        if player.check_for_split() and not player.split_choice:
+            player.split_choice = True
+            return BlackJack.split_choice(player)
         end_turn = False
 
         while not end_turn:
@@ -128,6 +129,9 @@ class BlackJack:
             match answer:
                 case "y":
                     player.make_split_hand()
+                    return States.SPLIT
+                case "n":
+                    return States.PLAYER
                     
     def roundover_state(deck: Deck, player: Player, dealer: Dealer):
         dealer.hard17(deck)

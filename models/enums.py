@@ -62,9 +62,7 @@ class States(Enum):
     PLAYER = "PLAYER" #2
     #player stands
     ROUNDOVER = "ROUNDOVER" #3
-    #Ace + 10 value on the deal
     BLACKJACK = "glizzymaxx!!!" #4
-    # 9 + 10
     DEALER_PEAK = "DEALER_PEAK" #5
     WIN = "ONE MORE ROUND CANT HURT" #6
     LOSE = "TRY AGAIN, NERD!" #7
@@ -73,3 +71,4 @@ class States(Enum):
     CHOOSE = "CHOOSE"
     GAMEOVER = "GAMEOVER"
     BET = "BET"
+    SPLIT = "SPLIT"
