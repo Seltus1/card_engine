@@ -10,14 +10,14 @@ class Dealer(Entity):
         return (f"The Dealer has {self.hand.hand_size}")
     #must hit if score below 16, dealer hits on soft 17, stop at hard 17
     def hard17(self, deck: Deck):
-        self.update_score(self.hand_score())
+        self.hand.update_score(self.hand.hand_score())
         if self.get_hard_score() == 21:
             return
         if self.get_hard_score() >= 17:
             return
-        while self.hard_score < 17 or (self.soft_score < 17 and self.soft_score != 0):
+        while self.get_hard_score() < 17 or (self.get_soft_score() < 17 and self.get_soft_score() != 0):
             self.hand.add_card(deck.deal_card(True))
-            self.update_score(self.hand_score())
+            self.hand.update_score(self.hand.hand_score())
     def get_up_card(self):
         if len(self.hand.cards) != 0:
             return self.hand.cards[0]

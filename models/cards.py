@@ -16,7 +16,6 @@ class Card:
         return ""
 
 
-
 @dataclass
 class Deck:
     is_empty: bool
@@ -52,7 +51,8 @@ class Deck:
 class Hand:
     hand_limit: int
     cards: list[Card] = field(default_factory=list)
-
+    soft_score: int = 0
+    hard_score: int = 0
 
     @property
     def hand_size(self) -> int:
@@ -80,7 +80,60 @@ class Hand:
     def contains_rank(self, target: str):
         return any(card.rank == target for card in self.cards)
     
+    def hand_score(self) -> int:
+        total = 0
+        if self.hand_size == 0:
+            return total
+        has_ace = self.contains_rank("ACE")
+        
+        if has_ace:
+            low_total = 0
+            for card in self.cards:
+                if card.rank == "ACE":
+                    ace_values = Value[card.rank].value
+                    low_total += ace_values[0]
+                    total += ace_values[1]
+                    continue
+                low_total += Value[card.rank].value
+                total += Value[card.rank].value
+            self.update_score((low_total,total))
+            return (low_total,total)
+        
+        else:
+            total += sum(Value[card.rank].value for card in self.cards)
+            self.update_score(total)
+            return total
 
+    def update_score(self, score):
+        
+        if isinstance(score, tuple):
+            self.soft_score = score[0]
+            self.hard_score = score[1]
+        else:
+            self.hard_score = score
+    
+    def get_max_valid_score(self):
+        if self.hard_score == 21 or self.soft_score == 21:
+            return 21
+        elif self.hard_score > 21:
+            if self.soft_score != 0 and self.soft_score < 22:
+                return self.soft_score
+            elif self.soft_score > 22:
+                return 21 - self.soft_score
+            else:
+                return 21 - self.hard_score
+        else:
+            return max(self.hard_score, self.soft_score)
+
+    def get_soft_score(self) -> int:
+        return self.soft_score
+    
+    def get_hard_score(self) -> int:
+        return self.hard_score
+    
+    def reset(self):
+        self.soft_score = 0
+        self.hard_score = 0
     
     def __str__(self):
         print_cards(self.cards)
