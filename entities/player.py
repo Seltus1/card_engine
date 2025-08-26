@@ -8,7 +8,8 @@ class Player(Entity):
         self.curr_bet: int = 0
         self.seen_cards: list[Card] = []
         self.split_hand: Hand
-        self.split_choice = False 
+        self.split_choice = False
+        self.split_bet: int = 0
 
     def __str__(self):
         return (f"The player has {self.hand.hand_size}")
@@ -32,7 +33,10 @@ class Player(Entity):
     def make_split_hand(self):
         self.split_hand = Hand.create_hand(10)
         self.split_hand.cards.append(self.hand.cards.pop())
-    
+        self.split_choice += self.curr_bet
+
+    def add_card_split(self):
+        x=5
     
     def reset(self):
         super().reset()
