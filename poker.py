@@ -1,0 +1,300 @@
+import os
+import time
+import random
+import shutil
+
+from utils.board_art import clear_screen
+from entities.player import Poker_Player
+from models.enums import Poker_Game_State
+from models.cards import Deck, print_cards
+from utils.table_renderer import TableRenderer
+from utils.poker_hands import BestHand, TieBreaker
+
+
+def center_text(text: str) -> str:
+    terminal_width = shutil.get_terminal_size().columns
+    padding = " " * ((terminal_width - len(text)) // 2)
+    return padding + text
+
+class PokerGame:
+
+    def __init__(self, players: int):
+        if players > 10:
+            raise ValueError("Too many players, 10 is the max")
+        
+        self.river = []
+        self.river_count = 0
+        self.single_river = False # If false, we will deal 3 cards to the river, if true we will deal 1 card to the river
+        self.deck = Deck.create_deck()
+
+        self.big_blind_index = 2
+        self.small_blind_index = 1
+        self.dealer_button_index = 0
+
+        self.pot = 0
+        self.big_blind = 20
+        self.call_amount = 20
+        self.small_blind = 10
+
+        self.did_raise = False
+        self.seen_players = []
+        
+        self.players = []
+        for i in range(players):
+            self.players.append(Poker_Player(bot=i != 0))
+        
+        random.shuffle(self.players) # give the players a random order to sit at the table
+
+        self.ranked_hands = []
+    
+
+
+    def call_bet(self, player: Poker_Player) -> None:
+        if player.money < self.call_amount:
+            raise ValueError("Player does not have enough chips to call")
+        if player.bot:
+            time.sleep(0.5)
+
+        print()
+        bet_amount = self.call_amount - player.round_bet
+        print(center_text(f"{player.name} called ${bet_amount}"))
+        self.pot += bet_amount
+        player.money -= bet_amount
+        player.round_bet += bet_amount
+    
+
+
+    def raise_bet(self, player: Poker_Player) -> None:
+        print(center_text(f"You currently have ${player.money} dollars"))
+        raise_amount = int(input(center_text("Please enter the amount you want to raise: $")))
+        if raise_amount < self.call_amount:
+            raise ValueError("Raise amount must be greater than the call amount")
+        
+        self.pot += raise_amount
+        player.money -= raise_amount
+
+        self.call_amount = raise_amount
+        self.did_raise = True
+        self.seen_players = [] # reset the seen players since everyone has to call the raise
+    
+
+
+    def fold(self, player: Poker_Player) -> None:
+        player_index = self.players.index(player)
+        self.players.pop(player_index)
+                
+    
+
+    def play_bet(self, player: Poker_Player) -> None:
+        bet = input(center_text("Please enter r to raise, c to call, or f to fold: "))
+
+        if bet.lower() == "r":
+            self.raise_bet(player)
+        elif bet.lower() == "c":
+            self.call_bet(player)
+        elif bet.lower() == "f":
+            self.fold()
+
+
+
+    def deal_cards(self):
+        did_small_blind = False
+        did_big_blind = False
+        did_all = False
+        for _ in range(2):
+            # The first card is dealt to the left of the dealer button (small blind)
+            end_index = self.dealer_button_index
+            player_pos = end_index + 1
+            while True:
+                player = self.players[player_pos]
+                if player.money < self.big_blind:
+                    player_pos = (player_pos + 1) % len(self.players)
+                    continue # TODO: Need to make a system where we can remove players from the game but still properly display them in the table
+
+                player.hand.add_card(self.deck.deal_card(True))
+
+                if player_pos == end_index:
+                    break # We have dealt the cards in a circle
+
+                # Resetting the players betting amount for the next round
+                is_small_blind = player_pos == self.small_blind_index
+                is_big_blind = player_pos == self.big_blind_index
+
+                if not did_small_blind and is_small_blind:
+                    player.round_bet = self.small_blind
+                    self.pot += self.small_blind
+                    did_small_blind = True
+                elif not did_big_blind and is_big_blind:
+                    player.round_bet = self.big_blind
+                    self.pot += self.big_blind
+                    self.seen_players.append(player_pos)
+                    did_big_blind = True
+                elif not did_all:
+                    player.round_bet = 0
+                
+                player_pos = (player_pos + 1) % len(self.players)
+            
+            did_all = True
+
+    
+
+    def bets(self):
+        index = self.big_blind_index + 1
+        if not self.players[self.big_blind_index].bot:
+            print(center_text("You were the big blind, and called"))
+            print_cards(list(self.players[self.big_blind_index].hand.cards))
+
+        while len(self.seen_players) < len(self.players):
+            player = self.players[index]
+            if player.bot:
+                self.call_bet(player)
+            else:
+                print("\n" + center_text("Player Hand is:"))
+                print_cards(list(player.hand.cards))
+                self.play_bet(player)
+            
+            self.seen_players.append(index)
+            index = (index + 1) % len(self.players)
+        
+        self.seen_players = []
+    
+
+
+    def showdown(self) -> None:
+        if not self.single_river:
+            for _ in range(3):
+                self.river.append(self.deck.deal_card(True))
+            
+            self.single_river = True
+        else:
+            self.river.append(self.deck.deal_card(True))
+        
+        self.river_count += 1
+    
+
+
+    def reveal(self) -> None:
+        for player in self.players:
+            cards = list(player.hand.cards)
+            hand = BestHand(cards, self.river)
+            best_hand = hand.get_best_hand()
+            player.best_hand = hand.best_hand
+            self.ranked_hands.append((best_hand, player))
+        
+        self.ranked_hands.sort(key=lambda x: x[0].value, reverse=True)
+
+        winners = [self.ranked_hands[0]]
+        for hand in self.ranked_hands[1:]:
+            if hand[0].value != winners[0][0].value:
+                break
+            
+            winners.append(hand)
+        
+        if len(winners) > 1:
+            winner = self.tie_breaker(winners)
+            winners[0] = (winners[0][0], winner)
+        
+        return winners[0][1]
+    
+
+
+    def winner(self) -> None:
+        winner = self.ranked_hands[0][1]
+        print(center_text(f"The winner is {winner.name} with a {self.ranked_hands[0][0].name}"))
+        
+        winner.money += self.pot
+        if not winner.bot:
+            print(center_text(f"Your new pot is ${winner.money}"))
+        
+        print(center_text("Starting the next round..."))
+        time.sleep(3)
+        self.reset_game()
+        clear_screen()
+    
+
+
+    def reset_game(self) -> None:
+        self.river = []
+        self.river_count = 0
+        self.single_river = False # If false, we will deal 3 cards to the river, if true we will deal 1 card to the river
+        self.deck = Deck.create_deck()
+
+        self.big_blind_index = 2
+        self.small_blind_index = 1
+        self.dealer_button_index = 0
+
+        self.pot = 0
+        self.big_blind = 20
+        self.call_amount = 20
+        self.small_blind = 10
+
+        self.did_raise = False
+        self.seen_players = []
+
+        self.ranked_hands = []
+
+        for player in self.players:
+            player.hand.cards = []
+            player.round_bet = 0
+    
+
+
+    def tie_breaker(self, cards: list[tuple[BestHand, Poker_Player]]) -> Poker_Player:
+        tie = TieBreaker(cards)
+        winner = tie.high_card()
+        return winner
+
+    
+    
+    def play_poker(self):
+        print(center_text("Welcome to Poker!"))
+        print(center_text(f"The small blind is ${self.small_blind}"))
+        print(center_text(f"The big blind is ${self.big_blind}"))
+        table = TableRenderer(self.players, self.pot, self.river)
+        table.print_table()
+
+        curr_state = Poker_Game_State.DEAL
+        while curr_state != Poker_Game_State.GAMEOVER:
+
+            match curr_state:
+
+                case Poker_Game_State.DEAL:
+                    self.deal_cards()
+                    curr_state = Poker_Game_State.BETS
+
+                case Poker_Game_State.BETS:
+                    self.bets()
+                    curr_state = Poker_Game_State.SHOWDOWN
+                    self.call_amount = self.big_blind
+                    table.total_pot = self.pot
+
+                case Poker_Game_State.SHOWDOWN:
+                    clear_screen()
+                    self.showdown()
+                    table.river = self.river
+                    table.print_table()
+                    curr_state = Poker_Game_State.REVEAL if self.river_count == 3 else Poker_Game_State.BETS
+                    if curr_state == Poker_Game_State.BETS:
+                        for player in self.players:
+                            player.round_bet = 0
+
+                case Poker_Game_State.REVEAL:
+                    self.reveal()
+                    curr_state = Poker_Game_State.WINNER
+
+                case Poker_Game_State.WINNER:
+                    self.winner()
+                    curr_state = Poker_Game_State.DEAL 
+                    table.total_pot = 0
+                    table.river = []
+                    table.print_table()
+                    
+
+
+
+if __name__ == "__main__":
+    # player = random.randint(4, 10)
+    players = 10
+    game = PokerGame(players)
+    game.play_poker()
+
