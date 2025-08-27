@@ -33,6 +33,9 @@ class BlackJack:
 
                 case States.PLAYER:
                     curr_state = BlackJack.player_state(deck, player, dealer)
+
+                case States.SPLIT:
+                    curr_state = BlackJack.split_state(deck, player, dealer)
                 
                 case States.BUST:
                     final_print(States.BUST, player, dealer)
@@ -86,9 +89,9 @@ class BlackJack:
     
     #player can hit, stand, double down(later), 
     def player_state(deck: Deck, player: Player, dealer: Dealer):
-        # if player.check_for_split() and not player.split_choice:
-        #     player.split_choice = True
-        #     return BlackJack.split_choice(player)
+        if player.check_for_split() and not player.split_choice:
+            player.split_choice = True
+            return BlackJack.split_choice(player)
         end_turn = False
 
         while not end_turn:
@@ -109,13 +112,10 @@ class BlackJack:
                         return States.BUST
                     
                 case "S":
-                    player.hand.update_score(player.hand.hand_score())
-                    dealer.hand.update_score(dealer.hand.hand_score())
                     return States.ROUNDOVER
                 
                 case "D":
                     player.hand.add_card(deck.deal_card(True))
-                    player.hand.update_score(player.hand.hand_score())
                     player.curr_bet *= 2
                     return States.ROUNDOVER 
                 case _:
@@ -135,42 +135,37 @@ class BlackJack:
     
     def split_state(deck: Deck,player: Player, dealer: Dealer):
         x=5
-    # def handle_hands(deck: Deck, player: Player, dealer: Dealer, split_hand: bool):
-    #     # if split_hand:
-    #     #     hand = player.split_hand
-    #     # else:
+    def handle_hands(deck: Deck, player: Player, dealer: Dealer, split_hand: bool):
             
-    #     while True:
-    #         clear_screen()
-    #         print_board(player, dealer, False)
-    #         tprint(f"Remaining cards: {deck.remaining_cards}", "small")
-    #         user_input = player.decide_action()
-    #         match user_input.upper():
-    #             case "H":
-    #                 player.add_card(deck.deal_card(True))
-    #                 player.update_score(player.hand_score())
+        while True:
+            clear_screen()
+            print_board(player, dealer, False)
+            tprint(f"Remaining cards: {deck.remaining_cards}", "small")
+            user_input = player.decide_action()
+            match user_input.upper():
+                case "H":
+                    player.add_card(deck.deal_card(True))
+                    player.update_score(player.hand_score())
 
-    #                 if player.get_hard_score() == 21 or player.get_soft_score() == 21:
-    #                     return States.ROUNDOVER
-    #                 if player.get_hard_score() > 21 and player.get_soft_score() > 21:
-    #                     return States.BUST
-    #                 elif player.get_hard_score() > 21 and player.get_soft_score() == 0:
-    #                     return States.BUST
+                    if player.get_hard_score() == 21 or player.get_soft_score() == 21:
+                        return States.ROUNDOVER
+                    if player.get_hard_score() > 21 and player.get_soft_score() > 21:
+                        return States.BUST
+                    elif player.get_hard_score() > 21 and player.get_soft_score() == 0:
+                        return States.BUST
                     
-    #             case "S":
-    #                 player.update_score(player.hand_score())
-    #                 dealer.update_score(dealer.hand_score())
-    #                 return States.ROUNDOVER
+                case "S":
+                    return States.ROUNDOVER
                 
-    #             case "D":
-    #                 player.hand.add_card(deck.deal_card(True))
-    #                 player.update_score(player.hand_score())
-    #                 player.curr_bet *= 2
-    #                 return States.ROUNDOVER 
-    #             case _:
-    #                 print("hey")
-    #                 continue         
+                case "D":
+                    player.hand.add_card(deck.deal_card(True))
+                    player.curr_bet *= 2
+                    return States.ROUNDOVER 
+                case _:
+                    print("hey")
+                    continue         
     def roundover_state(deck: Deck, player: Player, dealer: Dealer):
+        player.hand.update_score(player.hand.hand_score())
         dealer.hard17(deck)
         player_final_score = player.hand.get_max_valid_score()
         dealer_final_score = dealer.hand.get_max_valid_score()
@@ -188,7 +183,7 @@ class BlackJack:
    
     def dealer_peak(deck: Deck, player: Player, dealer: Dealer, stat_tracker: Stats) -> str:
         dealer.hand.update_score(dealer.hand.hand_score())
-        dealer_score = dealer.get_max_valid_score()
+        dealer_score = dealer.hand.get_max_valid_score()
         if dealer_score == 21:
             if player.has_natural_blackjack:
                 return States.TIE
