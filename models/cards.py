@@ -136,8 +136,6 @@ def print_cards(cards: list[Card]):
     skip_7 = ["rank_line_left"]
     skip_8 = ["side", "bottom", "suit_line", "rank_line_right"]
 
-    center_padding = center_text(len(cards))
-
     count = 0
     card_location = {}
     for card in cards:
@@ -155,8 +153,6 @@ def print_cards(cards: list[Card]):
             if card_location[card] < 0:
                 cards_to_print -= 1
                 continue
-
-        print(center_padding, end="", flush=True)
 
         for card_index, (card, build_index) in enumerate(card_location.items()):
             if build_index < 0:
@@ -194,9 +190,6 @@ def print_cards(cards: list[Card]):
                 if sleepTime < minSleepTime:
                     sleepTime = minSleepTime
                 time.sleep(sleepTime)
-
-                print(build_string, end="", flush=True)
-                time.sleep(0.0025)
 
             card_location[card] += 1
         
