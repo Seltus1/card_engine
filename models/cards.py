@@ -1,4 +1,9 @@
 import time
+<<<<<<< HEAD
+=======
+import shutil
+
+>>>>>>> 10595f5 (polished the game loop, and fixed a few bugs with the game loop)
 from dataclasses import dataclass, field
 from models.enums import *
 from random import shuffle
@@ -105,6 +110,13 @@ def determineCardColor(suit):
         case "CLUB":
             return "blue"
 
+def center_text(amount_of_cards: int) -> str:
+    total_length = (11 * amount_of_cards) - amount_of_cards 
+    terminal_width = shutil.get_terminal_size().columns
+    padding = " " * ((terminal_width - total_length) // 2)
+    return padding
+
+
 def print_cards(cards: list[Card]):
     card_builder = {
         "top":             ["┌", "─", "─", "─", "─", "─", "─", "─", "─", "─┐"],
@@ -119,6 +131,8 @@ def print_cards(cards: list[Card]):
     skipables = ["bottom", "side", "suit_line", "rank_line_left", "rank_line_right"]
     skip_7 = ["rank_line_left"]
     skip_8 = ["side", "bottom", "suit_line", "rank_line_right"]
+
+    center_padding = center_text(len(cards))
 
     count = 0
     card_location = {}
@@ -137,6 +151,8 @@ def print_cards(cards: list[Card]):
             if card_location[card] < 0:
                 cards_to_print -= 1
                 continue
+
+        print(center_padding, end="", flush=True)
 
         for card_index, (card, build_index) in enumerate(card_location.items()):
             if build_index < 0:
