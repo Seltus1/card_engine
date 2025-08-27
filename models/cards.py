@@ -1,9 +1,6 @@
 import time
-<<<<<<< HEAD
-=======
 import shutil
 
->>>>>>> 10595f5 (polished the game loop, and fixed a few bugs with the game loop)
 from dataclasses import dataclass, field
 from models.enums import *
 from random import shuffle
@@ -117,6 +114,13 @@ def center_text(amount_of_cards: int) -> str:
     return padding
 
 
+def center_text(amount_of_cards: int) -> str:
+    total_length = (11 * amount_of_cards) - amount_of_cards 
+    terminal_width = shutil.get_terminal_size().columns
+    padding = " " * ((terminal_width - total_length) // 2)
+    return padding
+
+
 def print_cards(cards: list[Card]):
     card_builder = {
         "top":             ["┌", "─", "─", "─", "─", "─", "─", "─", "─", "─┐"],
@@ -190,6 +194,9 @@ def print_cards(cards: list[Card]):
                 if sleepTime < minSleepTime:
                     sleepTime = minSleepTime
                 time.sleep(sleepTime)
+
+                print(build_string, end="", flush=True)
+                time.sleep(0.0025)
 
             card_location[card] += 1
         
