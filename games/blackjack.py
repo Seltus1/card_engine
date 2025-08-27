@@ -135,8 +135,8 @@ class BlackJack:
     
     def split_state(deck: Deck,player: Player, dealer: Dealer):
         x=5
-    def handle_hands(deck: Deck, player: Player, dealer: Dealer, split_hand: bool):
-            
+    def handle_hands(deck: Deck, player: Player, dealer: Dealer, is_split: bool):
+        hand = player.split_hand if is_split else player.hand
         while True:
             clear_screen()
             print_board(player, dealer, False)
@@ -144,25 +144,24 @@ class BlackJack:
             user_input = player.decide_action()
             match user_input.upper():
                 case "H":
-                    player.add_card(deck.deal_card(True))
-                    player.update_score(player.hand_score())
-
-                    if player.get_hard_score() == 21 or player.get_soft_score() == 21:
+                    hand.add_card(deck.deal_card(True))
+                    hand.update_score(player.hand_score())
+                    if hand.get_hard_score() == 21 or hand.get_soft_score() == 21:
                         return States.ROUNDOVER
-                    if player.get_hard_score() > 21 and player.get_soft_score() > 21:
+                    if hand.get_hard_score() > 21 and hand.get_soft_score() > 21:
                         return States.BUST
-                    elif player.get_hard_score() > 21 and player.get_soft_score() == 0:
+                    elif hand.get_hard_score() > 21 and hand.get_soft_score() == 0:
                         return States.BUST
                     
                 case "S":
                     return States.ROUNDOVER
                 
                 case "D":
-                    player.hand.add_card(deck.deal_card(True))
+                    #do fix split betting
+                    hand.add_card(deck.deal_card(True))
                     player.curr_bet *= 2
                     return States.ROUNDOVER 
                 case _:
-                    print("hey")
                     continue         
     def roundover_state(deck: Deck, player: Player, dealer: Dealer):
         player.hand.update_score(player.hand.hand_score())

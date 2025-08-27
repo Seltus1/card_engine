@@ -60,6 +60,16 @@ def print_board(player: Player, dealer: Dealer, end_game: bool):
     tprint("Player's Hand", font="small")
     print(player.hand)
 
+def print_board_split(player: Player, dealer: Dealer, end_game: bool, is_split: bool):
+    tprint("Dealer's Hand", font="small")
+    if end_game:
+        print(dealer.hand)
+    else:
+        print(dealer.get_up_card())
+    tprint("Player's Hand", font="small")
+    print(player.hand)
+
+
 
 def print_choose_state(player: Player, dealer: Dealer, state: States):
     print(text2art(f"Dealer: {dealer.hand.get_max_valid_score()}", "small"))
