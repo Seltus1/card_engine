@@ -89,7 +89,7 @@ class BlackJack:
         # if player.check_for_split() and not player.split_choice:
         #     player.split_choice = True
         #     return BlackJack.split_choice(player)
-        # end_turn = False
+        end_turn = False
 
         while not end_turn:
             clear_screen()
