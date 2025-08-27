@@ -9,6 +9,13 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from entities.player import Poker_Player
 
 
+def format_money(amount: int, show_cents: bool = False) -> str:
+    if show_cents:
+        return f"${amount:,.2f}"
+    else:
+        return f"${amount:,}"
+
+
 class Player(IntEnum):
     PLAYER0 = 0
     PLAYER1 = 1
@@ -24,22 +31,23 @@ class Player(IntEnum):
 
 
 class Table:
-    SLEEP_TIME = 0.000001
+    SLEEP_TIME = 0.001
     LEFT = True
     RIGHT = False
 
     POT_LENGTH = 7                # Length of the {P#POT}
     PLAYER_LENGTH = 9             # Length of the {PLAYER#}
-    STRAIGHT_LENGTH = 110         # Length of the "X" straigh
+    STRAIGHT_LENGTH = 111         # Length of the "X" straigh
+
 
     DEALER_SPACING = 50           # The space between "DEALER" to the border
     BORDER_SPACING = 5            # Spacing from border to content
 
     TOP_PLAYER_BORDER_DIFF = 5    # The distance between the border and player
-    TOP_PLAYER_SPACING_DIFF = 82  # The distance between player 0 and player 9
+    TOP_PLAYER_SPACING_DIFF = 83  # The distance between player 0 and player 9
 
     TOP_POT_BORDER_DIFF = 8       # The distance between the border and their total money
-    TOP_POT_SPACING_DIFF = 84     # The dostamce between the 2 players money
+    TOP_POT_SPACING_DIFF = 85     # The dostamce between the 2 players money
     TOP_POT_SPACING = {
         True: {
             "start_player_index": 25,
@@ -53,46 +61,55 @@ class Table:
         }
     }
 
-    BIG_BLANK_4 = 119
-    BIG_BLANK_5 = 123
+    BIG_BLANK_4_SPACING = 56
+    BIG_BLANK_5_SPACING = 59
     BIG_BLANK_6 = 127
-    BIG_BLANK_7 = 131
-    SMALL_BLANK_1 = 133
+    SMALL_BLANK_1 = 131
     
-    BOARD_SPACING = 63
+    BOARD_SPACING = 62
 
-    SB_3_TOTAL_SPACING = 36
+    SB_3_TOTAL_SPACING = 35
     SB_3_MIDDLE_TEXT = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    SB_4_TOTAL_SPACING = 36
+    SB_4_TOTAL_SPACING = 35
     SB_4_MIDDLE_TEXT = "x   ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   x"
-    SB_5_SPACING = 36
+    SB_5_SPACING = 35
     SB_5_MIDDLE_TEXT = "x    │  C      │ │  C      │ │  C      │ │  C      │ │  C      │    x"
 
-    NO_BEND_1_SPACING = 36
+    NO_BEND_1_SPACING = 35
     NO_BEND_1_MIDDLE_TEXT = "x     │   A     │ │   A     │ │   A     │ │   A     │ │   A     │     x"
-    NO_BEND_2_SPACING = 36
+    NO_BEND_2_SPACING = 35
     NO_BEND_2_MIDDLE_TEXT = "x     │    R    │ │    R    │ │    R    │ │    R    │ │    R    │     x"
 
-    UNDER_SB_5_SPACING = 36
+    UNDER_SB_5_SPACING = 35
     UNDER_SB_5_MIDDLE_TEXT = "x    │     D   │ │     D   │ │     D   │ │     D   │ │     D   │    x"
-    UNDER_SB_4_SPACING = 36
+    UNDER_SB_4_SPACING = 35
     UNDER_SB_4_MIDDLE_TEXT = "x   │      1  │ │      2  │ │      3  │ │      4  │ │      5  │   x"
-    UNDER_SB_3_SPACING = 36
+    UNDER_SB_3_SPACING = 35
     UNDER_SB_3_MIDDLE_TEXT = "x  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘  x"
     UNDER_SB_2_MIDDLE_TEXT = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-    UNDER_SB_2_SPACING = 36
-    UNDER_SB_1_SPACING = 133
+    UNDER_SB_2_SPACING = 35
+    UNDER_SB_1_SPACING = 131
 
-    UNDER_BIG_BLANK_6 = 129
-    UNDER_BIG_BLANK_5 = 125
-    UNDER_BIG_BLANK_4 = 121
-    UNDER_BIG_BLANK_3 = 117
-    UNDER_BIG_BLANK_2 = 113
-    UNDER_BIG_BLANK_1 = 109
+    UNDER_BIG_BLANK_6 = 127
+    UNDER_BIG_BLANK_5 = 123
+    UNDER_BIG_BLANK_4 = 119
+    UNDER_BIG_BLANK_3 = 115
+    UNDER_BIG_BLANK_2 = 111
+    UNDER_BIG_BLANK_1 = 107
 
-    def __init__(self, players: list[Poker_Player]) -> None:
+    BOTTOM_PLAYER_BORDER_DIFF = 7
+    P3_P4_DIFF = 21
+    P4_P5_DIFF = 23
+    P5_P6_DIFF = 21
+
+    BOTTOM_MONEY_DIFF = 6
+    BOTTOM_MONEY_SPACING = 23
+    BOTTOM_MONEY_MIDDLE_SPACING = 25
+
+    def __init__(self, players: list[Poker_Player], total_pot: int) -> None:
         self.border = "XXXX"
         self.players = players
+        self.total_pot = total_pot
         self.build_order = {
             "straight": {
                 "function": self._create_straight
@@ -101,7 +118,8 @@ class Table:
                 "function": self._print_text,
                 "args": {
                     "text": "DEALER",
-                    "spacing": self.DEALER_SPACING
+                    "spacing": self.DEALER_SPACING,
+                    "uneven": True
                 }
             },
             "big_bend_2": {
@@ -119,15 +137,17 @@ class Table:
                 }
             },
             "big_bend_4": {
-                "function": self.print_blank,
+                "function": self._print_text,
                 "args": {
-                    "x": self.BIG_BLANK_4
+                    "text": "THE POT",
+                    "spacing": self.BIG_BLANK_4_SPACING
                 }
             },
             "big_bend_5": {
-                "function": self.print_blank,
+                "function": self.print_pot,
                 "args": {
-                    "x": self.BIG_BLANK_5
+                    "pot": self.total_pot,
+                    "spacing": self.BIG_BLANK_5_SPACING
                 }
             },
             "big_bend_6": {
@@ -136,12 +156,6 @@ class Table:
                     "x": self.BIG_BLANK_6
                 }
             },
-            # "big_bend_7": {
-            #     "function": self.print_blank,
-            #     "args": {
-            #         "x": self.BIG_BLANK_7
-            #     }
-            # },
             "small_bend_1": {
                 "function": self.print_blank,
                 "args": {
@@ -167,8 +181,8 @@ class Table:
             "small_bend_4": {
                 "function": self.setup_middle,
                 "args": {
-                    "string1": f"${self.players[Player.PLAYER1].money}",
-                    "string2": f"${self.players[Player.PLAYER8].money}",
+                    "string1": format_money(self.players[Player.PLAYER1].money),
+                    "string2": format_money(self.players[Player.PLAYER8].money),
                     "spacing": self.SB_4_TOTAL_SPACING,
                     "middle_text": self.SB_4_MIDDLE_TEXT
                 }
@@ -213,8 +227,8 @@ class Table:
             "under_small_bend_3": {
                 "function": self.setup_middle,
                 "args": {
-                    "string1": f"${self.players[Player.PLAYER1].money}",
-                    "string2": f"${self.players[Player.PLAYER8].money}",
+                    "string1": format_money(self.players[Player.PLAYER1].money),
+                    "string2": format_money(self.players[Player.PLAYER8].money),
                     "spacing": self.UNDER_SB_3_SPACING,
                     "middle_text": self.UNDER_SB_3_MIDDLE_TEXT
                 }
@@ -251,15 +265,21 @@ class Table:
                 }
             },
             "under_big_bend_3": {
-                "function": self.print_blank,
+                "function": self.setup_bottom_players,
                 "args": {
-                    "x": self.UNDER_BIG_BLANK_3
+                    "player3": self.players[Player.PLAYER3],
+                    "player4": self.players[Player.PLAYER4],
+                    "player5": self.players[Player.PLAYER5],
+                    "player6": self.players[Player.PLAYER6],
                 }
             },
             "under_big_bend_2": {
-                "function": self.print_blank,
+                "function": self.setup_bottom_pot,
                 "args": {
-                    "x": self.UNDER_BIG_BLANK_2
+                    "player3": self.players[Player.PLAYER3],
+                    "player4": self.players[Player.PLAYER4],
+                    "player5": self.players[Player.PLAYER5],
+                    "player6": self.players[Player.PLAYER6],
                 }
             },
             "under_big_bend_1": {
@@ -269,10 +289,7 @@ class Table:
                 }
             },
             "under_straight": {
-                "function": self._create_straight,
-                "args": {
-                    "end": True
-                }
+                "function": self._create_straight
             }
         }
     
@@ -287,14 +304,13 @@ class Table:
 
 
 
-    def _create_straight(self, end=False) -> None:
-        length = self.STRAIGHT_LENGTH if not end else self.STRAIGHT_LENGTH + 3
-        string = "".join(["X" for _ in range(length)])
+    def _create_straight(self) -> None:
+        string = "".join(["X" for _ in range(self.STRAIGHT_LENGTH)])
         self.print_string(string)
     
 
 
-    def _print_text(self, text: str, spacing: int) -> None:
+    def _print_text(self, text: str, spacing: int, uneven: bool = False) -> None:
         build_order = [
             self.border,
             self._create_space(spacing),
@@ -302,6 +318,9 @@ class Table:
             self._create_space(spacing),
             self.border
         ]
+
+        if uneven:
+            build_order[3] = self._create_space(spacing + 1)
 
         for order in build_order:
             self.print_string(order)
@@ -318,7 +337,7 @@ class Table:
         right_diff = self.PLAYER_LENGTH - right_len   
         new_diff += right_diff
 
-        return new_diff + 1
+        return new_diff
     
 
 
@@ -342,8 +361,8 @@ class Table:
 
 
     def _update_diff_between_pots(self, left_name: str, left_money: int, right_name: str, right_money: int):
-        left_money_str = f"${left_money}"
-        right_money_str = f"${right_money}"
+        left_money_str = format_money(left_money)
+        right_money_str = format_money(right_money)
 
         left_change, right_change = self._normalize_pot_diff(left_name, left_money_str, self.LEFT)
 
@@ -354,7 +373,7 @@ class Table:
 
         mid += left_change
         right = self.TOP_POT_BORDER_DIFF + right_change
-        return left, mid + 1, right
+        return left, mid, right
     
 
 
@@ -364,6 +383,16 @@ class Table:
         left_add = leftover_space // 2
         right_add = leftover_space - left_add
         return left_add, right_add
+    
+
+
+    def _edit_bottom_distance(self, text: str, is_player: bool) -> tuple[int, int]:
+        text_len = len(text)
+        place_holder = self.PLAYER_LENGTH if is_player else self.POT_LENGTH
+        diff = text_len - place_holder
+        left_diff = diff // 2
+        right_diff = diff - left_diff
+        return left_diff, right_diff
 
 
 
@@ -399,9 +428,9 @@ class Table:
         build_order = [
             self.border,
             self._create_space(left),
-            f"${player0.money}",
+            format_money(player0.money),
             self._create_space(mid),
-            f"${player9.money}",
+            format_money(player9.money),
             self._create_space(right),
             self.border
         ]
@@ -415,6 +444,28 @@ class Table:
         build_order = [
             self.border,
             self._create_space(x),
+            self.border
+        ]
+
+        for order in build_order:
+            self.print_string(order)
+    
+
+
+    def print_pot(self, pot: int, spacing: int) -> None:
+        length = len(format_money(pot)) 
+        diff = length - 5
+        left_diff = diff // 2
+        right_diff = diff - left_diff
+
+        left = spacing - left_diff
+        right = spacing - right_diff
+
+        build_order = [
+            self.border,
+            self._create_space(left),
+            format_money(pot),
+            self._create_space(right),
             self.border
         ]
 
@@ -443,6 +494,79 @@ class Table:
     
 
 
+    def setup_bottom_players(self, player3: Poker_Player, player4: Poker_Player, player5: Poker_Player, player6: Poker_Player) -> None:
+        spaces = [
+            self.TOP_POT_BORDER_DIFF,       # space1: between border and player3
+            self.P3_P4_DIFF,                # space2: between player3 and player4
+            self.P4_P5_DIFF,                # space3: between player4 and player5
+            self.P5_P6_DIFF,                # space4: between player5 and player6
+            self.BOTTOM_PLAYER_BORDER_DIFF  # space5: between player6 and border
+        ]
+
+        players = [player3, player4, player5, player6]
+        for i in range(len(players)):
+            left_change, right_change = self._edit_bottom_distance(players[i].name, True)
+            spaces[i] -= left_change        # Adjust left spacing
+            spaces[i + 1] -= right_change   # Adjust right spacing
+
+        space1, space2, space3, space4, space5 = spaces
+        
+        build_order = [
+            self.border,
+            self._create_space(space1),
+            player3.name,
+            self._create_space(space2),
+            player4.name,
+            self._create_space(space3),
+            player5.name,
+            self._create_space(space4),
+            player6.name,
+            self._create_space(space5),
+            self.border
+        ]
+
+        for order in build_order:
+            self.print_string(order)
+    
+
+
+    def setup_bottom_pot(self, player3: Poker_Player, player4: Poker_Player, player5: Poker_Player, player6: Poker_Player) -> None:
+        spaces = [
+            self.BOTTOM_MONEY_DIFF,
+            self.BOTTOM_MONEY_SPACING,
+            self.BOTTOM_MONEY_MIDDLE_SPACING,
+            self.BOTTOM_MONEY_SPACING,
+            self.BOTTOM_MONEY_DIFF
+        ]
+
+        players = [player3, player4, player5, player6]
+        for i in range(len(players)):
+           left_change, right_change = self._edit_bottom_distance(format_money(players[i].money), False)
+           spaces[i] -= left_change
+           spaces[i + 1] -= right_change
+
+        space1, space2, space3, space4, space5 = spaces
+
+        build_order = [
+            self.border,
+            self._create_space(space1),
+            format_money(player3.money),
+            self._create_space(space2),
+            format_money(player4.money),
+            self._create_space(space3),
+            format_money(player5.money),
+            self._create_space(space4),
+            format_money(player6.money),
+            self._create_space(space5),
+            self.border
+        ]
+
+        for order in build_order:
+            self.print_string(order)
+
+    
+
+
     def print_table(self):
         padding = 20
 
@@ -458,7 +582,7 @@ class Table:
                 # Call function without arguments
                 self.build_order[order]["function"]()
             
-            if count < 6:
+            if count < 7:
                 padding -= 2
             elif count < 12:
                 padding -= 1
@@ -478,5 +602,6 @@ class Table:
 if __name__ == "__main__":
     # Create dummy players for testing
     dummy_players = [Poker_Player(2, True) for i in range(10)]
-    table = Table(dummy_players)
+    total_pot = 10000
+    table = Table(dummy_players, total_pot)
     table.print_table()
