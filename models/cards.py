@@ -1,4 +1,5 @@
 import time
+import shutil
 
 from dataclasses import dataclass, field
 from models.enums import *
@@ -118,6 +119,13 @@ def get_ranks(card: Card):
 
 
 
+def center_text(amount_of_cards: int) -> str:
+    total_length = (11 * amount_of_cards) - amount_of_cards 
+    terminal_width = shutil.get_terminal_size().columns
+    padding = " " * ((terminal_width - total_length) // 2)
+    return padding
+
+
 def print_cards(cards: list[Card]):
     card_builder = {
         "top":             ["┌", "─", "─", "─", "─", "─", "─", "─", "─", "─┐"],
@@ -133,6 +141,8 @@ def print_cards(cards: list[Card]):
     skip_7 = ["rank_line_left"]
     skip_8 = ["side", "bottom", "suit_line", "rank_line_right"]
 
+    center_padding = center_text(len(cards))
+
     count = 0
     card_location = {}
     for card in cards:
@@ -146,7 +156,9 @@ def print_cards(cards: list[Card]):
             if card_location[card] < 0:
                 cards_to_print -= 1
                 continue
-            
+
+        print(center_padding, end="", flush=True)
+
         for card_index, (card, build_index) in enumerate(card_location.items()):
             if build_index < 0:
                 card_location[card] += 1

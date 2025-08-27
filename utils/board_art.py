@@ -67,3 +67,9 @@ def final_print(state: States, player: Player, dealer: Dealer):
                 console.print(Text(text2art(state.value, "xhelvi"), justify="center"))
             case States.TIE:
                 console.print(Text(text2art(state.value, "xhelvi"), style="blue"))
+
+def clear_screen():
+    if os.name == "nt":  # Windows
+        os.system("cls")
+    else:
+        os.system("clear")

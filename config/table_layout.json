@@ -1,0 +1,186 @@
+{
+  "layout_sections": [
+    {
+      "name": "straight",
+      "type": "border_line",
+      "function": "create_straight"
+    },
+    {
+      "name": "big_bend_1",
+      "type": "text_line",
+      "function": "_print_text",
+      "text": "DEALER",
+      "spacing": 50,
+      "uneven": true
+    },
+    {
+      "name": "big_bend_2",
+      "type": "top_players",
+      "function": "setup_top_players",
+      "players": ["PLAYER0", "PLAYER9"]
+    },
+    {
+      "name": "big_bend_3",
+      "type": "top_pot",
+      "function": "setup_top_pot",
+      "players": ["PLAYER0", "PLAYER9"]
+    },
+    {
+      "name": "big_bend_4",
+      "type": "text_line",
+      "function": "_print_text",
+      "text": "THE POT",
+      "spacing": 56
+    },
+    {
+      "name": "big_bend_5",
+      "type": "pot_display",
+      "function": "print_pot",
+      "spacing": 59
+    },
+    {
+      "name": "big_bend_6",
+      "type": "blank_line",
+      "function": "print_blank",
+      "spacing": 127
+    },
+    {
+      "name": "small_bend_1",
+      "type": "blank_line",
+      "function": "print_blank",
+      "spacing": 131
+    },
+    {
+      "name": "small_bend_2",
+      "type": "text_line",
+      "function": "_print_text",
+      "text": "The Board",
+      "spacing": 62
+    },
+    {
+      "name": "small_bend_3",
+      "type": "middle_section",
+      "function": "setup_middle",
+      "players": ["PLAYER1", "PLAYER8"],
+      "spacing": 35,
+      "middle_text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "data_type": "name"
+    },
+    {
+      "name": "small_bend_4",
+      "type": "middle_section",
+      "function": "setup_middle",
+      "players": ["PLAYER1", "PLAYER8"],
+      "spacing": 35,
+      "middle_text": "x   ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   x",
+      "data_type": "money"
+    },
+    {
+      "name": "small_bend_5",
+      "type": "text_line",
+      "function": "_print_text",
+      "text": "x    │  C      │ │  C      │ │  C      │ │  C      │ │  C      │    x",
+      "spacing": 35
+    },
+    {
+      "name": "no_bend_1",
+      "type": "text_line",
+      "function": "_print_text",
+      "text": "x     │   A     │ │   A     │ │   A     │ │   A     │ │   A     │     x",
+      "spacing": 35
+    },
+    {
+      "name": "no_bend_2",
+      "type": "text_line",
+      "function": "_print_text",
+      "text": "x     │    R    │ │    R    │ │    R    │ │    R    │ │    R    │     x",
+      "spacing": 35
+    },
+    {
+      "name": "under_small_bend_5",
+      "type": "text_line",
+      "function": "_print_text",
+      "text": "x    │     D   │ │     D   │ │     D   │ │     D   │ │     D   │    x",
+      "spacing": 35
+    },
+    {
+      "name": "under_small_bend_4",
+      "type": "middle_section",
+      "function": "setup_middle",
+      "players": ["PLAYER2", "PLAYER7"],
+      "spacing": 35,
+      "middle_text": "x   │      1  │ │      2  │ │      3  │ │      4  │ │      5  │   x",
+      "data_type": "name"
+    },
+    {
+      "name": "under_small_bend_3",
+      "type": "middle_section",
+      "function": "setup_middle",
+      "players": ["PLAYER1", "PLAYER8"],
+      "spacing": 35,
+      "middle_text": "x  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘  x",
+      "data_type": "money"
+    },
+    {
+      "name": "under_small_bend_2",
+      "type": "text_line",
+      "function": "_print_text",
+      "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "spacing": 35
+    },
+    {
+      "name": "under_small_bend_1",
+      "type": "blank_line",
+      "function": "print_blank",
+      "spacing": 131
+    },
+    {
+      "name": "under_big_bend_6",
+      "type": "blank_line",
+      "function": "print_blank",
+      "spacing": 127
+    },
+    {
+      "name": "under_big_bend_5",
+      "type": "blank_line",
+      "function": "print_blank",
+      "spacing": 123
+    },
+    {
+      "name": "under_big_bend_4",
+      "type": "blank_line",
+      "function": "print_blank",
+      "spacing": 119
+    },
+    {
+      "name": "under_big_bend_3",
+      "type": "bottom_players",
+      "function": "setup_bottom_players",
+      "players": ["PLAYER3", "PLAYER4", "PLAYER5", "PLAYER6"]
+    },
+    {
+      "name": "under_big_bend_2",
+      "type": "bottom_pot",
+      "function": "setup_bottom_pot",
+      "players": ["PLAYER3", "PLAYER4", "PLAYER5", "PLAYER6"]
+    },
+    {
+      "name": "under_big_bend_1",
+      "type": "blank_line",
+      "function": "print_blank",
+      "spacing": 107
+    },
+    {
+      "name": "under_straight",
+      "type": "border_line",
+      "function": "create_straight"
+    }
+  ],
+  "padding_progression": [
+    {"range": [0, 7], "change": -2},
+    {"range": [7, 12], "change": -1},
+    {"range": [12, 13], "change": 0},
+    {"range": [13, 18], "change": 1},
+    {"range": [18, null], "change": 2}
+  ]
+}

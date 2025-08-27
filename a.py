@@ -60,7 +60,7 @@ XXXX                                    x     │    R    │ │    R    │ �
 # print(pyfiglet.figlet_format("Welcome to Poker", font="ansi_shadow"))
 # print(table, flush=True)
 
-print(len("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"))
-print(len("XXXX                                    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx                                    XXXX"))
+print(len("│ K     ┌─────────┐"))
+print(len("Welcome to Poker!"))
 
 
